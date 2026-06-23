@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Utensils, Play, Users } from 'lucide-react';
+import { Utensils, Play, Users, Sparkles } from 'lucide-react';
 
 const programs = [
   {
@@ -56,39 +56,79 @@ const programs = [
 
 export default function ServiceDetails() {
   return (
-    <section className="py-20 md:py-32 px-5 md:px-12 bg-white">
-      <div className="max-w-7xl mx-auto space-y-32">
+    <section className="py-20 md:py-32 px-5 md:px-12 bg-[#02050c] relative overflow-hidden">
+      {/* Background neon glows */}
+      <div className="absolute top-1/3 left-[10%] w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/3 right-[10%] w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto space-y-28 relative z-10">
         {programs.map((program, pIndex) => (
           <div key={pIndex} className="space-y-12">
             <div className="text-center space-y-4">
-              <p className="text-blue-600 font-bold text-xs md:text-sm tracking-widest uppercase">{program.subtitle}</p>
-              <h2 className="text-4xl md:text-6xl font-display font-black tracking-tighter text-slate-900">{program.title}</h2>
+              <p className="text-amber-400 font-black text-xs md:text-sm tracking-widest uppercase flex items-center justify-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+                {program.subtitle}
+              </p>
+              <h2 className="text-3xl md:text-6xl font-display font-black tracking-tighter text-white">
+                {program.title}
+              </h2>
+              <div className="neon-line-blue max-w-sm mx-auto opacity-40" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {program.items.map((item, iIndex) => (
-                <motion.div 
-                  key={iIndex}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: iIndex * 0.1 }}
-                  className="bg-slate-50 rounded-[2.5rem] overflow-hidden flex flex-col border border-slate-100"
-                >
-                  <div className="p-8 pb-4 flex flex-col items-center">
-                    <span className="text-blue-600 font-black text-2xl mb-2">{iIndex + 1}</span>
-                    <h3 className="text-4xl md:text-5xl font-serif italic text-blue-600 mb-4">{item.type}</h3>
-                    <p className="text-slate-500 text-sm font-bold text-center leading-tight min-h-[40px]">{item.desc}</p>
-                  </div>
-                  <div className="flex-1 grid grid-cols-1 gap-2 p-4 pt-4">
-                    {item.images.map((img, imgIndex) => (
-                      <div key={imgIndex} className="aspect-square rounded-3xl overflow-hidden shadow-sm">
-                        <img src={img} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt={item.type} />
+              {program.items.map((item, iIndex) => {
+                const IconComponent = item.icon;
+                
+                // Colors based on pIndex and iIndex
+                const borderGlowClass = iIndex % 3 === 0 
+                  ? 'border-blue-500/20 hover:border-blue-500/50 shadow-[0_4px_30px_rgba(59,130,246,0.05)]' 
+                  : iIndex % 3 === 1 
+                    ? 'border-purple-500/20 hover:border-purple-500/50 shadow-[0_4px_30px_rgba(168,85,247,0.05)]' 
+                    : 'border-amber-400/20 hover:border-amber-400/50 shadow-[0_4px_30px_rgba(212,175,55,0.05)]';
+
+                const textHighlightClass = iIndex % 3 === 0
+                  ? 'text-blue-400'
+                  : iIndex % 3 === 1
+                    ? 'text-purple-400'
+                    : 'text-amber-400';
+
+                return (
+                  <motion.div 
+                    key={iIndex}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: iIndex * 0.1 }}
+                    className={`bg-slate-950/70 backdrop-blur-md rounded-[2rem] overflow-hidden flex flex-col border ${borderGlowClass} transition-all duration-300 transform hover:-translate-y-1`}
+                  >
+                    <div className="p-8 pb-4 flex flex-col items-center">
+                      <div className="flex items-center gap-2 mb-3">
+                        <IconComponent className={`w-5 h-5 ${textHighlightClass}`} />
+                        <span className={`font-black text-lg ${textHighlightClass}`}>{String(iIndex + 1).padStart(2, '0')}</span>
                       </div>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
+                      <h3 className={`text-3xl md:text-4xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r ${iIndex % 3 === 0 ? 'from-blue-400 to-cyan-300' : iIndex % 3 === 1 ? 'from-purple-400 to-fuchsia-300' : 'from-amber-200 to-amber-400'} italic mb-3`}>
+                        {item.type}
+                      </h3>
+                      <p className="text-slate-400 text-xs md:text-sm font-bold text-center leading-relaxed min-h-[40px] px-2">{item.desc}</p>
+                    </div>
+                    
+                    <div className="flex-1 grid grid-cols-1 gap-3 p-5 pt-3">
+                      {item.images.map((img, imgIndex) => (
+                        <div key={imgIndex} className="aspect-square rounded-2xl overflow-hidden shadow-md border border-slate-800 relative group">
+                          <img 
+                            src={img} 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                            alt={item.type} 
+                            referrerPolicy="no-referrer"
+                          />
+                          {/* Dark glow mask */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         ))}

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { HelpCircle, ChevronDown } from 'lucide-react';
+import { HelpCircle, ChevronDown, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 const faqs = [
@@ -29,37 +29,61 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="py-20 md:py-24 px-5 md:px-12 bg-white border-t border-slate-100">
-      <div className="max-w-3xl mx-auto">
+    <section id="faq" className="py-20 md:py-28 px-5 md:px-12 bg-[#040815] border-t border-slate-900/60 relative overflow-hidden">
+      {/* Glow highlight */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="max-w-3xl mx-auto relative z-10">
         <div className="text-center mb-12 md:mb-16 space-y-4">
-          <p className="text-blue-600 font-bold uppercase tracking-widest text-[10px] md:text-xs">Support Center</p>
-          <h2 className="text-3xl md:text-4xl font-display font-black tracking-tight">자주 묻는 질문</h2>
+          <p className="text-[#D4AF37] font-black uppercase tracking-widest text-[10px] md:text-xs flex items-center justify-center gap-1">
+            <HelpCircle className="w-4 h-4 text-amber-400 animate-pulse" />
+            Support Center
+          </p>
+          <h2 className="text-3xl md:text-5xl font-display font-black tracking-tighter text-white">
+            자주 묻는 질문
+          </h2>
+          <div className="neon-line-blue max-w-[150px] mx-auto opacity-50" />
         </div>
 
-        <div className="space-y-3 md:space-y-4">
-          {faqs.map((faq, i) => (
-            <div 
-              key={i} 
-              className="bg-slate-50 border border-slate-100 rounded-xl md:rounded-2xl overflow-hidden active:scale-[0.99] transition-transform"
-            >
-              <button 
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full px-5 md:px-8 py-5 md:py-6 flex items-center justify-between text-left hover:bg-slate-100 transition-colors"
+        <div className="space-y-4">
+          {faqs.map((faq, i) => {
+            const isOpen = openIndex === i;
+            
+            // Neon accent border based on state
+            const borderClass = isOpen 
+              ? 'border-blue-500/40 shadow-[0_0_15px_rgba(59,130,246,0.15)] bg-slate-950' 
+              : 'border-slate-800/60 bg-slate-950/60 hover:border-slate-700 hover:bg-slate-950/80';
+
+            return (
+              <div 
+                key={i} 
+                className={`border rounded-2xl overflow-hidden active:scale-[0.99] transition-all duration-300 ${borderClass}`}
               >
-                <span className="font-bold text-slate-800 text-sm md:text-base leading-snug pr-4">{faq.question}</span>
-                <ChevronDown className={`w-4 h-4 md:w-5 md:h-5 text-blue-600 shrink-0 transition-transform duration-300 ${openIndex === i ? 'rotate-180' : ''}`} />
-              </button>
-              <motion.div 
-                initial={false}
-                animate={{ height: openIndex === i ? 'auto' : 0 }}
-                className="overflow-hidden"
-              >
-                <div className="px-8 pb-6 text-slate-500 text-sm leading-relaxed border-t border-slate-100 pt-4">
-                  {faq.answer}
-                </div>
-              </motion.div>
-            </div>
-          ))}
+                <button 
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  className="w-full px-6 md:px-8 py-5 flex items-center justify-between text-left transition-colors"
+                >
+                  <span className={`font-black text-sm md:text-base leading-snug pr-4 transition-colors ${isOpen ? 'text-amber-200' : 'text-slate-200 hover:text-white'}`}>
+                    {faq.question}
+                  </span>
+                  <div className={`w-7 h-7 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 shrink-0 transition-all duration-300 ${isOpen ? 'border-amber-400/40 text-amber-300 rotate-180 bg-slate-950' : ''}`}>
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </button>
+                
+                <motion.div 
+                  initial={false}
+                  animate={{ height: isOpen ? 'auto' : 0 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-6 md:px-8 pb-6 text-slate-400 text-xs md:text-sm leading-relaxed border-t border-slate-900 pt-4.5 bg-slate-950/40">
+                    {faq.answer}
+                  </div>
+                </motion.div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

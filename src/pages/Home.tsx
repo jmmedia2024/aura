@@ -1,3 +1,4 @@
+import NoticeBanner from '../components/NoticeBanner';
 import Hero from '../components/Hero';
 import Benefits from '../components/Benefits';
 import ServiceDetails from '../components/ServiceDetails';
@@ -9,6 +10,7 @@ import FAQ from '../components/FAQ';
 export default function Home() {
   return (
     <>
+      <NoticeBanner />
       <Hero />
       <Benefits />
       <ServiceDetails />
@@ -19,3 +21,4 @@ export default function Home() {
     </>
   );
 }
+

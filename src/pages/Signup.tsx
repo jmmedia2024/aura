@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Mail, Lock, User, UserPlus, Loader2, Users } from 'lucide-react';
+import { Mail, Lock, User, UserPlus, Loader2, Users, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -45,7 +45,6 @@ export default function Signup() {
         }
       }
 
-      // Create user profile in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         userId: user.uid,
         email: email,
@@ -140,39 +139,40 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen pt-32 pb-20 px-5 flex items-center justify-center bg-slate-50 relative overflow-hidden">
+    <div className="min-h-screen pt-32 pb-20 px-5 flex items-center justify-center bg-[#02050c] relative overflow-hidden">
       {/* Decorative Blur */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-blue-100 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="relative w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/5 p-8 md:p-12 border border-slate-100 z-10"
+        className="relative w-full max-w-xl bg-slate-950/85 backdrop-blur-md rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.8),_0_0_30px_rgba(99,102,241,0.15)] p-8 md:p-12 border border-blue-500/20 z-10"
       >
-        <form onSubmit={handleSignup} className="space-y-8">
+        <form onSubmit={handleSignup} className="space-y-6">
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 text-cyan-300 rounded-full text-[10px] font-black uppercase tracking-widest mb-1 border border-blue-500/20">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} />
               Membership Registration
             </div>
-            <h1 className="text-3xl font-display font-black tracking-tighter text-slate-900">팬클럽 카드 가입</h1>
-            <p className="text-slate-500 text-sm font-medium leading-relaxed">2026 한정판 코요태 신지 팬카드의 주인공이 되세요</p>
+            <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-white">팬클럽 카드 가입</h1>
+            <p className="text-slate-400 text-xs font-semibold leading-relaxed">2026 한정판 코요태 신지 팬카드의 주인공이 되세요</p>
           </div>
 
           {error && (
-            <div className="p-4 bg-red-50 border border-red-100 text-red-600 text-xs font-bold rounded-xl text-center">
+            <div className="p-4 bg-red-950/40 border border-red-500/20 text-red-400 text-xs font-bold rounded-xl text-center">
               {error}
             </div>
           )}
 
-          {/* 가입 유형 선택 탭 */}
-          <div className="flex bg-slate-50 p-1 rounded-2xl border border-slate-100/50">
+          {/* Role Choice tabs */}
+          <div className="flex bg-slate-900 p-1 rounded-2xl border border-slate-800">
             <button
               type="button"
               onClick={() => setSignUpRole('User')}
-              className={`flex-1 py-3 text-xs font-black rounded-xl transition-all ${
+              className={`flex-1 py-2.5 text-xs font-black rounded-xl transition-all ${
                 signUpRole === 'User'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-600'
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-650 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               일반회원 가입
@@ -180,17 +180,17 @@ export default function Signup() {
             <button
               type="button"
               onClick={() => setSignUpRole('Sales')}
-              className={`flex-1 py-3 text-xs font-black rounded-xl transition-all ${
+              className={`flex-1 py-2.5 text-xs font-black rounded-xl transition-all ${
                 signUpRole === 'Sales'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-600'
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-650 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               크리에이터 가입
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
@@ -201,9 +201,9 @@ export default function Signup() {
                     required
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 pl-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 pl-12 text-slate-100 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all placeholder-slate-600"
                   />
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                 </div>
               </div>
 
@@ -216,9 +216,9 @@ export default function Signup() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 pl-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 pl-12 text-slate-100 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all placeholder-slate-600"
                   />
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                 </div>
               </div>
 
@@ -231,9 +231,9 @@ export default function Signup() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 pl-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 pl-12 text-slate-100 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all placeholder-slate-600"
                   />
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                 </div>
               </div>
 
@@ -246,45 +246,47 @@ export default function Signup() {
                       placeholder="recruiter@example.com"
                       value={recruiterEmail}
                       onChange={(e) => setRecruiterEmail(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 pl-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all"
+                      className="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 pl-12 text-slate-100 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all placeholder-slate-600"
                     />
-                    <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="space-y-6">
-              <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 space-y-3">
+            <div className="space-y-5">
+              <div className="p-5 bg-slate-900 rounded-2xl border border-slate-800 space-y-3">
                  <div className="flex items-center gap-2">
-                    <input type="checkbox" required className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    <span className="text-xs font-black text-slate-700 uppercase">전체 이용 약관 및 정보 수집에 동의합니다</span>
+                    <input type="checkbox" required className="w-4 h-4 rounded border-slate-800 bg-slate-950 text-blue-500 focus:ring-blue-500/20" />
+                    <span className="text-[10px] md:text-xs font-black text-slate-300 uppercase">이용 약관 동의</span>
                  </div>
-                 <p className="text-[10px] text-slate-400 leading-relaxed font-medium">본 가입 버튼을 누르시면, 전일미디어 통합 팬 서비스 지침 및 보안 규정을 완전히 확인하고 동의한 것으로 간주됩니다.</p>
+                 <p className="text-[10px] text-slate-500 leading-relaxed font-semibold">
+                   본 가입 버튼을 누르시면, 전일미디어 통합 팬 서비스 지침 및 보안 규정을 완전히 확인하고 동의한 것으로 간주됩니다.
+                 </p>
               </div>
 
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-600/20 hover:bg-blue-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-blue-600/10 hover:opacity-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
                 {loading ? '가입 중...' : '회원가입 신청'}
               </button>
 
-              <div className="relative py-2">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-                <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest text-slate-400">
-                  <span className="bg-white px-3">또는 간편가입</span>
+              <div className="relative py-1">
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-900"></div></div>
+                <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest text-slate-500">
+                  <span className="bg-slate-950 px-3">또는 간편가입</span>
                 </div>
               </div>
 
               <button 
                 type="button" 
                 onClick={handleGoogleSignup}
-                className="w-full flex items-center justify-center gap-2.5 py-4 bg-white border border-slate-200 text-slate-700 hover:border-blue-400 rounded-2xl text-xs font-black hover:bg-blue-50/10 active:scale-[0.99] transition-all shadow-sm"
+                className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-slate-900 border border-slate-800 text-slate-200 hover:border-cyan-500/30 rounded-2xl text-xs font-black hover:bg-slate-850 active:scale-[0.99] transition-all shadow-sm"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22c-.66.86-1.06 2.11-1.06 3.71z"/>
@@ -295,20 +297,10 @@ export default function Signup() {
             </div>
           </div>
 
-          <p className="text-center text-sm text-slate-500">
+          <p className="text-center text-xs md:text-sm text-slate-400">
             이미 계정이 있으신가요? {' '}
-            <Link to="/login" className="text-blue-600 font-bold hover:underline">로그인</Link>
+            <Link to="/login" className="text-cyan-400 font-bold hover:underline">로그인</Link>
           </p>
-
-          <div className="pt-4 border-t border-dashed border-slate-100 text-center space-y-1">
-            <p className="text-[11px] text-amber-600 font-extrabold leading-relaxed">
-              ⚠️ 파이어베이스 도메인 차단 오류(unauthorized-domain)가 발생하나요?
-            </p>
-            <p className="text-[10px] text-slate-400 font-semibold leading-relaxed">
-              가입 절차 없이 즉시 테스트하도록 준비된 <Link to="/login" className="text-blue-650 underline font-black">로그인 페이지의</Link><br />
-              <span className="font-black text-slate-700">"⚡ 우회 로그인"</span> 버튼을 눌러보세요!
-            </p>
-          </div>
         </form>
       </motion.div>
     </div>

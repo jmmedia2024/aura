@@ -1,126 +1,200 @@
 import { motion } from 'motion/react';
 import { useSettings } from '../lib/useSettings';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Sparkles, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Logo from './Logo';
 
 export default function Hero() {
   const { settings, loading } = useSettings();
 
   if (loading) return (
-    <div className="h-screen flex items-center justify-center bg-blue-600">
-      <Loader2 className="w-8 h-8 text-white animate-spin" />
+    <div className="h-screen flex items-center justify-center bg-[#02050c]">
+      <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
     </div>
   );
 
   return (
-    <section className="relative min-h-screen flex items-center pt-24 pb-16 px-5 md:px-10 overflow-hidden bg-gradient-to-b from-[#3b82f6] via-[#60a5fa] to-[#93c5fd]">
-      {/* Cloud & Light Effects (Aesthetic based on Screenshot 1) */}
-      <div className="absolute inset-0 opacity-40">
-        <div className="absolute top-[10%] left-[5%] w-[400px] h-[300px] bg-white rounded-full blur-[100px] animate-pulse" />
-        <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[400px] bg-white rounded-full blur-[120px]" />
-        <div className="absolute top-[30%] right-[20%] w-[300px] h-[300px] bg-blue-200 rounded-full blur-[80px]" />
+    <section className="relative min-h-screen flex items-center pt-28 pb-16 px-5 md:px-10 overflow-hidden bg-[#02050c]">
+      {/* Cosmic Nebula Background & Light Effects */}
+      <div className="absolute inset-0 opacity-60 pointer-events-none">
+        <div className="absolute top-[5%] left-[10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[10%] right-[5%] w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[150px]" />
+        <div className="absolute top-[30%] right-[30%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px]" />
+        <div className="absolute -top-[50px] left-1/2 -translate-x-1/2 w-full h-[150px] bg-gradient-to-b from-blue-500/10 to-transparent blur-md" />
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10 w-full relative">
-        <div className="space-y-8 text-center lg:text-left">
+      {/* Floating Sparkles Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.015)_1px,transparent_1px)] [background-size:24px_24px] opacity-80" />
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10 w-full relative">
+        
+        {/* Left Side: Copywriting & Actions */}
+        <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
+          
+          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center lg:items-start gap-4"
           >
-            <div className="flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-               <div className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-               <span className="text-white text-[10px] md:text-xs font-black uppercase tracking-widest">{settings.hero.badge}</span>
+            <div className="flex items-center gap-1.5 px-4 py-1.5 bg-blue-500/10 backdrop-blur-md rounded-full border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+               <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+               <span className="text-cyan-300 text-[10px] md:text-xs font-black uppercase tracking-widest">{settings.hero.badge}</span>
             </div>
-            <h2 className="text-xl md:text-2xl font-bold text-white/90 drop-shadow-sm">{settings.hero.artist}</h2>
+            <h2 className="text-lg md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 drop-shadow-sm flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-400 animate-pulse" />
+              {settings.hero.artist}
+            </h2>
           </motion.div>
           
+          {/* Copywriting Titles */}
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="space-y-6"
           >
-            {/* Circles as seen in Screenshot 1 */}
-            <div className="flex justify-center lg:justify-start gap-3">
+            {/* Logo/Badge Row */}
+            <div className="flex justify-center lg:justify-start gap-3 flex-wrap">
               {(settings.hero.title + settings.hero.subtitle).split('').slice(0, 4).map((text: string, i: number) => (
-                <div key={i} className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-700/80 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-xl">
-                  <span className="text-white text-xl md:text-2xl font-black">{text}</span>
+                <div key={i} className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-slate-900/80 backdrop-blur-md flex items-center justify-center border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.25)]">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 text-xl md:text-2xl font-black">{text}</span>
                 </div>
               ))}
             </div>
 
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-display font-black leading-[0.9] tracking-tighter text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
-              {settings.hero.title}<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-white italic">{settings.hero.subtitle}</span>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black leading-[1] tracking-tighter text-white">
+              {settings.hero.title}
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 italic drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                {settings.hero.subtitle}
+              </span>
             </h1>
 
-            <div className="inline-block px-10 py-3 rounded-full border-2 border-white/50 backdrop-blur-sm bg-white/5">
-               <span className="text-white text-base md:text-xl font-bold">{settings.hero.tagline}</span>
+            {/* Tagline Neon Box */}
+            <div className="inline-block px-8 py-3.5 rounded-2xl border border-blue-500/20 backdrop-blur-md bg-blue-950/20 shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+               <span className="text-blue-300 text-sm md:text-lg font-bold tracking-tight">
+                 ✨ {settings.hero.tagline}
+               </span>
             </div>
           </motion.div>
 
+          {/* Action Buttons */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-8 pt-6"
+            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-8 pt-4"
           >
-            <Link to="/apply" className="bg-white text-blue-600 hover:bg-blue-50 text-xl font-black py-5 px-10 rounded-full shadow-[0_15px_40px_-5px_rgba(255,255,255,0.4)] transition-all active:scale-95 group text-center inline-block">
+            <Link to="/apply" className="btn-neon-3d-gold px-10 py-5 text-lg font-black group flex items-center gap-2">
               나의 팬 선택하기
+              <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
+            
             <div className="flex flex-col text-center sm:text-left">
-              <span className="text-xs text-white/70 uppercase tracking-widest font-black">Membership Fee</span>
-              <span className="font-display font-black text-4xl text-white tracking-tighter drop-shadow-md">{settings.hero.membershipFee}</span>
+              <span className="text-xs text-slate-400 uppercase tracking-widest font-black flex items-center gap-1">
+                <span>💳</span> 연회원 가입 혜택가
+              </span>
+              <span className="font-display font-black text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-blue-200 tracking-tighter drop-shadow-md">
+                {settings.hero.membershipFee}
+              </span>
             </div>
           </motion.div>
+
+          {/* Neon line divider inside hero */}
+          <div className="neon-line-blue pt-8 max-w-md mx-auto lg:mx-0 opacity-50" />
         </div>
 
+        {/* Right Side: Luxury Card Mockup */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.8, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 1, type: "spring", bounce: 0.4 }}
-          className="flex justify-center lg:justify-end"
+          className="lg:col-span-5 flex justify-center"
         >
-          {/* Card Mockup based on Screenshot 1 */}
-          <div className="relative group w-full max-w-[440px] aspect-[1.58/1] rounded-[1.5rem] overflow-hidden shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)] border-4 border-white/30 transform hover:-rotate-1 transition-all duration-700">
-             {/* Pink/Rose Theme for Shinji Card */}
-             <div className="absolute inset-0 bg-gradient-to-br from-rose-200 via-rose-100 to-rose-300" />
+          {/* Card Mockup (Luxurious Metallic Deep-Dark Neon theme) */}
+          <div className="relative group w-full max-w-[420px] aspect-[1.58/1] rounded-[1.8rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),_0_0_40px_rgba(59,130,246,0.3)] border-2 border-amber-400/40 transform hover:-rotate-1 hover:scale-105 transition-all duration-700">
              
-             {/* Shinji Photo Placeholder */}
-             <div className="absolute inset-x-0 bottom-0 top-0">
+             {/* Rich Metallic Deep Dark Nebula Background */}
+             <div className="absolute inset-0 bg-[#090e1a]" />
+             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.25)_0%,transparent_60%)]" />
+             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(217,70,239,0.15)_0%,transparent_60%)]" />
+
+             {/* Shining laser micro lines */}
+             <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.01)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.01)_50%,rgba(255,255,255,0.01)_75%,transparent_75%,transparent)] [background-size:10px_10px]" />
+
+             {/* Gold Star and Orbit Accent Graphic (Replicating user logo feel) */}
+             <div className="absolute top-[20%] right-[10%] w-32 h-32 border border-amber-400/20 rounded-full opacity-60 pointer-events-none filter blur-[1px] transform rotate-45" />
+             <div className="absolute top-[20%] right-[10%] w-32 h-32 border-2 border-t-transparent border-indigo-500/40 rounded-full opacity-80 pointer-events-none" />
+
+             {/* Star Sparkle on Card */}
+             <div className="absolute top-[20%] right-[25%] opacity-70">
+               <Sparkles className="w-6 h-6 text-amber-200 animate-pulse" />
+             </div>
+
+             {/* Artist Image Masked */}
+             <div className="absolute right-0 bottom-0 top-0 w-[55%] pointer-events-none overflow-hidden">
                <img 
                  src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&q=80" 
                  alt="Shinji" 
-                 className="w-full h-full object-cover"
+                 className="w-full h-full object-cover object-center opacity-70 group-hover:scale-110 transition-transform duration-700"
+                 referrerPolicy="no-referrer"
                />
-               <div className="absolute inset-0 bg-gradient-to-t from-rose-400/30 to-transparent" />
+               <div className="absolute inset-0 bg-gradient-to-r from-[#090e1a] via-transparent to-transparent" />
+               <div className="absolute inset-0 bg-gradient-to-t from-[#090e1a]/60 to-transparent" />
              </div>
 
-             {/* Card Details */}
-             <div className="absolute top-6 left-6 right-6 flex justify-between items-start">
-               <div className="text-rose-900/60 mix-blend-multiply italic font-serif">"SHINJI"</div>
-               <div className="w-12 h-8 rounded-md bg-gradient-to-r from-yellow-300 to-yellow-600 shadow-inner" />
-             </div>
-
-             <div className="absolute bottom-10 left-8 space-y-2">
-               <div className="text-rose-900/60 font-mono text-xl tracking-[0.2em]">4265 **** **** ****</div>
-               <div className="flex items-end gap-3">
-                 <div className="text-[10px] items-center gap-1 inline-flex bg-white/40 px-2 py-0.5 rounded text-rose-900 font-bold uppercase tracking-widest">Visa Debit</div>
+             {/* Card Top Details */}
+             <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-10">
+               <div className="flex items-center gap-1.5">
+                 <Logo size="sm" showText={false} />
+                 <span className="text-[10px] font-black tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-amber-100 to-amber-300 uppercase">
+                   AURORA BLACK
+                 </span>
+               </div>
+               {/* Smart Card Chip */}
+               <div className="w-10 h-7 rounded-md bg-gradient-to-br from-amber-200 via-amber-400 to-amber-600 shadow-inner flex flex-col justify-between p-1.5">
+                 <div className="h-[1px] bg-slate-900/20" />
+                 <div className="h-[1px] bg-slate-900/20" />
+                 <div className="h-[1px] bg-slate-900/20" />
                </div>
              </div>
 
-             <div className="absolute top-1/2 right-4 -translate-y-1/2 flex flex-col items-end opacity-20 pointer-events-none">
-               <span className="text-rose-900 font-display font-black text-6xl italic leading-none">SHINJI</span>
+             {/* Card Number & Expiry */}
+             <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end z-10">
+               <div className="space-y-1">
+                 <div className="text-amber-100/90 font-mono text-base md:text-lg tracking-[0.25em] drop-shadow-md">
+                   8829 **** 2026 ****
+                 </div>
+                 <div className="flex items-center gap-4">
+                   <div className="text-[9px] text-slate-400 font-bold tracking-widest uppercase">
+                     EXP 12/29
+                   </div>
+                   <div className="text-[9px] text-slate-400 font-bold tracking-widest uppercase">
+                     CVV ***
+                   </div>
+                 </div>
+               </div>
+               {/* Membership Signature Stamp */}
+               <div className="text-right">
+                 <div className="text-[9px] text-amber-400 font-black tracking-widest uppercase mb-0.5">SHINJI FANDOM</div>
+                 <div className="text-xs font-display font-black text-white italic tracking-tighter">VIP Platinum</div>
+               </div>
+             </div>
+
+             {/* Watermark Logo Accent */}
+             <div className="absolute top-1/2 left-6 -translate-y-1/2 opacity-5 pointer-events-none">
+               <Logo size="lg" showText={false} />
              </div>
              
-             {/* Shine Effect */}
-             <div className="absolute top-0 -left-full w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-25deg] group-hover:animate-[shine_2s_infinite]" />
+             {/* Dynamic Light Shine Animation on hover */}
+             <div className="absolute top-0 -left-full w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] group-hover:animate-[shine_1.5s_infinite]" />
           </div>
         </motion.div>
       </div>
 
-      {/* Wave Divider */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+      {/* Modern Neon Wave divider */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#030712] to-transparent pointer-events-none" />
     </section>
   );
 }

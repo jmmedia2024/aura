@@ -27,7 +27,7 @@ service cloud.firestore {
     
     function isValidUserCreate(data) {
       return data.keys().hasAll(['userId', 'email', 'displayName', 'tier', 'role', 'referredByEmail', 'ancestors', 'phoneNumber', 'createdAt']) &&
-             data.keys().size() == 9 &&
+             data.keys().size() >= 9 && data.keys().size() <= 13 &&
              data.userId == request.auth.uid &&
              data.email is string && data.email.size() <= 200 &&
              data.displayName is string && data.displayName.size() <= 100 &&
@@ -35,13 +35,12 @@ service cloud.firestore {
              data.role in ['User', 'Sales', 'Admin'] &&
              data.referredByEmail is string &&
              data.ancestors is list &&
-             data.phoneNumber is string &&
-             data.createdAt == request.time;
+             data.phoneNumber is string;
     }
 
     function isValidUserUpdate(data, existingData) {
       return data.keys().hasAll(['userId', 'email', 'displayName', 'tier', 'role', 'referredByEmail', 'ancestors', 'phoneNumber', 'createdAt']) &&
-             data.keys().size() == 9 &&
+             data.keys().size() >= 9 && data.keys().size() <= 13 &&
              data.userId == existingData.userId &&
              data.email == existingData.email &&
              data.displayName is string && data.displayName.size() <= 100 &&
@@ -49,8 +48,7 @@ service cloud.firestore {
              data.role in ['User', 'Sales', 'Admin'] &&
              data.referredByEmail is string &&
              data.ancestors is list &&
-             data.phoneNumber is string &&
-             data.createdAt == existingData.createdAt;
+             data.phoneNumber is string;
     }
 
     function isValidNotification(data) {
@@ -97,7 +95,7 @@ service cloud.firestore {
       allow update: if isAdmin() || (
                       isOwner(userId) && 
                       isValidUserUpdate(incoming(), existing()) && 
-                      incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'phoneNumber'])
+                      incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'phoneNumber', 'selectedFanId', 'selectedFanName', 'selectedFanPhotoUrl', 'selectedFanUpdatedAt'])
                     );
       allow list: if isSignedIn();
     }

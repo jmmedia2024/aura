@@ -23,50 +23,9 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Check for local demo session first to bypass Firebase Auth
-    const checkDemoAuth = () => {
-      const demoAuthRaw = localStorage.getItem('demo_user_auth');
-      if (demoAuthRaw) {
-        try {
-          const parsed = JSON.parse(demoAuthRaw);
-          if (parsed.user && parsed.profile) {
-            setUser(parsed.user);
-            setProfile(parsed.profile);
-            setLoading(false);
-            return true;
-          }
-        } catch (e) {
-          console.error("Failed to parse demo auth session:", e);
-        }
-      }
-      return false;
-    };
-
-    if (checkDemoAuth()) {
-      // Setup window listener to reset demo mode dynamically if logged out
-      const handleStorageChange = () => {
-        if (!localStorage.getItem('demo_user_auth')) {
-          setUser(null);
-          setProfile(null);
-          setLoading(false);
-          // Force a reload to let standard Firebase Auth initialize
-          window.location.reload();
-        }
-      };
-      window.addEventListener('storage', handleStorageChange);
-      return () => {
-        window.removeEventListener('storage', handleStorageChange);
-      };
-    }
-
     let unsubscribeProfile: (() => void) | null = null;
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
-      // Defensive re-check: if a demo sessions is started during runtime
-      if (localStorage.getItem('demo_user_auth')) {
-        return;
-      }
-
       setUser(currentUser);
       if (unsubscribeProfile) {
         unsubscribeProfile();
