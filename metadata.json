@@ -1,0 +1,6 @@
+{
+  "name": "Koyote Shinji Fan Card",
+  "description": "Exclusive 2026 limited edition Koyote Shinji fandom card & tour landing page.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
