@@ -69,7 +69,28 @@ export default function Apply() {
       // Simulate subtle feedback duration
       await new Promise(resolve => setTimeout(resolve, 800));
     } catch (err: any) {
-      console.error("Error updating selected fan: ", err);
+      console.warn("Error updating selected fan: ", err);
+      // Fallback
+      const demoAuthRaw = localStorage.getItem('demo_user_auth');
+      if (demoAuthRaw) {
+        try {
+          const parsed = JSON.parse(demoAuthRaw);
+          parsed.profile = {
+            ...parsed.profile,
+            selectedFanId: fanId,
+            selectedFanName: name,
+            selectedFanPhotoUrl: imageUrl,
+            selectedFanUpdatedAt: new Date()
+          };
+          localStorage.setItem('demo_user_auth', JSON.stringify(parsed));
+          await new Promise(resolve => setTimeout(resolve, 850));
+          alert('최애 팬 선택이 임시 로컬 저장소에 반영되었습니다. 마이페이지에서 즉시 확인 가능합니다!');
+          window.location.reload();
+          return;
+        } catch (e) {
+          console.error(e);
+        }
+      }
       setErrorMessage('최애 팬 선택 저장에 실패했습니다: ' + err.message);
     } finally {
       setSavingId(null);

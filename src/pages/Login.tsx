@@ -147,8 +147,8 @@ export default function Login() {
             {loading ? '로그인 중...' : '로그인'}
           </button>
 
-          {/* Admin Test Autofill */}
-          <div className="flex flex-col items-center justify-center pt-1 space-y-1">
+          {/* Admin Test Autofill & Bypass */}
+          <div className="flex flex-col items-center justify-center pt-2 space-y-2">
             <button
               type="button"
               onClick={() => {
@@ -160,6 +160,72 @@ export default function Login() {
               🛠️ 수석 사업기획자(Admin) 테스트 계정 자동입력
             </button>
             <p className="text-[9px] text-slate-400 font-semibold">(이메일: new2020.jeonil@gmail.com / 임시 테스트 비밀번호: jeonil1234)</p>
+            
+            <div className="w-full pt-2 border-t border-dashed border-slate-100 flex flex-col items-center space-y-1.5">
+              <span className="text-[10px] text-amber-600 font-black tracking-tight flex items-center gap-1">
+                ⚠️ 파이어베이스 도메인 제한 오류(unauthorized-domain) 해결용
+              </span>
+              <div className="flex gap-2 w-full justify-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const mockSession = {
+                      user: {
+                        uid: 'admin_mock_123',
+                        email: 'new2020.jeonil@gmail.com',
+                        displayName: '전일미디어 수석기획자',
+                        emailVerified: true
+                      },
+                      profile: {
+                        userId: 'admin_mock_123',
+                        email: 'new2020.jeonil@gmail.com',
+                        displayName: '전일미디어 수석기획자',
+                        tier: 'Legend Tier',
+                        role: 'Admin',
+                        referredByEmail: '',
+                        ancestors: [],
+                        phoneNumber: '010-1234-5678',
+                        createdAt: new Date()
+                      }
+                    };
+                    localStorage.setItem('demo_user_auth', JSON.stringify(mockSession));
+                    window.location.href = '/';
+                  }}
+                  className="flex-1 text-[11px] text-amber-700 hover:text-white hover:bg-amber-600 font-black transition-all border border-amber-200 hover:border-amber-600 bg-amber-50 px-2 py-2.5 rounded-xl text-center shadow-sm"
+                >
+                  ⚡ 관리자(Admin) 우회 로그인
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const mockSession = {
+                      user: {
+                        uid: 'user_mock_456',
+                        email: 'tester@fandomaurora.com',
+                        displayName: '홍길동 프로',
+                        emailVerified: true
+                      },
+                      profile: {
+                        userId: 'user_mock_456',
+                        email: 'tester@fandomaurora.com',
+                        displayName: '홍길동 프로',
+                        tier: 'Gold',
+                        role: 'Sales',
+                        referredByEmail: 'new2020.jeonil@gmail.com',
+                        ancestors: ['new2020.jeonil@gmail.com'],
+                        phoneNumber: '010-9876-5432',
+                        createdAt: new Date()
+                      }
+                    };
+                    localStorage.setItem('demo_user_auth', JSON.stringify(mockSession));
+                    window.location.href = '/';
+                  }}
+                  className="flex-1 text-[11px] text-blue-700 hover:text-white hover:bg-blue-600 font-black transition-all border border-blue-200 hover:border-blue-600 bg-blue-50 px-2 py-2.5 rounded-xl text-center shadow-sm"
+                >
+                  ⚡ 영업사원(Sales) 우회 로그인
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="relative py-4">

@@ -17,7 +17,9 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
+      localStorage.removeItem('demo_user_auth');
       await auth.signOut();
+      window.location.reload();
     } catch (error) {
       console.error("Logout failed:", error);
     }

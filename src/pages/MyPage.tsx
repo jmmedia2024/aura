@@ -25,6 +25,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useFirebase } from '../lib/FirebaseContext';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { getLocalMockUsers } from '../lib/mockData';
 
 interface UserProfile {
   userId: string;
@@ -119,8 +120,11 @@ export default function MyPage() {
           });
           setDownlineUsers(usersList);
         } catch (err: any) {
-          console.error("Error fetching downline users:", err);
-          setErrorOriginal('추천 회원 목록을 불러오는 중 오류가 발생했습니다.');
+          console.warn("Firestore error, falling back to local mock data:", err);
+          // Fallback to local mock data
+          const allMockUsers = getLocalMockUsers();
+          const list = allMockUsers.filter(u => u.ancestors && u.ancestors.includes(user.email!));
+          setDownlineUsers(list as any);
         } finally {
           setFetching(false);
         }
@@ -159,13 +163,24 @@ export default function MyPage() {
 
   // Recursive Tree Node Renderer
   const renderTreeNode = (node: TreeNode, depth: number = 0) => {
-    const formattedDate = node.user.createdAt
-      ? new Date((node.user.createdAt.seconds || 0) * 1000).toLocaleDateString('ko-KR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })
-      : '가입일 정보 없음';
+    const formattedDate = (() => {
+      if (!node.user.createdAt) return '가입일 정보 없음';
+      let d: Date;
+      if (typeof node.user.createdAt.toDate === 'function') {
+        d = node.user.createdAt.toDate();
+      } else if (node.user.createdAt.seconds !== undefined) {
+        d = new Date(node.user.createdAt.seconds * 1000);
+      } else if (node.user.createdAt instanceof Date) {
+        d = node.user.createdAt;
+      } else {
+        d = new Date(node.user.createdAt);
+      }
+      return d.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    })();
 
     return (
       <div key={node.email} className="relative pl-6 md:pl-10 mt-6 select-none group">

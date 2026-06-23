@@ -299,6 +299,16 @@ export default function Signup() {
             이미 계정이 있으신가요? {' '}
             <Link to="/login" className="text-blue-600 font-bold hover:underline">로그인</Link>
           </p>
+
+          <div className="pt-4 border-t border-dashed border-slate-100 text-center space-y-1">
+            <p className="text-[11px] text-amber-600 font-extrabold leading-relaxed">
+              ⚠️ 파이어베이스 도메인 차단 오류(unauthorized-domain)가 발생하나요?
+            </p>
+            <p className="text-[10px] text-slate-400 font-semibold leading-relaxed">
+              가입 절차 없이 즉시 테스트하도록 준비된 <Link to="/login" className="text-blue-650 underline font-black">로그인 페이지의</Link><br />
+              <span className="font-black text-slate-700">"⚡ 우회 로그인"</span> 버튼을 눌러보세요!
+            </p>
+          </div>
         </form>
       </motion.div>
     </div>
