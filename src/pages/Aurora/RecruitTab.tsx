@@ -13,7 +13,7 @@ export default function RecruitTab() {
     { title: "✅ 멤버십 오너 가입 촉진", desc: "코요태 신지 등 대표 아티스트의 특별 2026 패키지 가치를 주변에 소개하고 회원 영입" },
     { title: "✅ 연관 라이프 홍보 마케팅", desc: "오 OCEAN 뷰 팬미팅, 크루즈 소장 투어, 풀파티 등의 희귀 혜택 명세 전달" },
     { title: "✅ 소셜 SNS 마이 채널 채널링", desc: "유튜브 Shorts, 틱톡, 인스타그램 릴스를 적극 수시 연계 배포 및 바이럴 전파" },
-    { title: "✅ 지사/대리점 네트워크 관리", desc: "지역별 팬 오프 모임 활성화 지원 및 피드백 본사 유연 소통 전달책 역할" }
+    { title: "✅ 지사/지역 파트너 라운지 네트워크 관리", desc: "지역별 팬 오프 모임 활성화 지원 및 피드백 본사 유연 소통 전달책 역할" }
   ];
 
   return (
@@ -35,7 +35,7 @@ export default function RecruitTab() {
             <span>FANDOM AURORA PROFESSIONAL MARKETER RECRUIT</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter leading-none">
-            팬덤 오로라 전문 영업 사원 대모집
+            팬덤 오로라 전문 크리에이터 대모집
           </h2>
           <p className="text-slate-500 text-xs md:text-sm font-semibold max-w-xl mx-auto leading-relaxed">
             K-POP, 트로트, 추억의 영원한 스타들과 팬덤을 잇는 국내 유일의 혁신 모델! 좋아하는 스타와 함께 투어하며 유정의 가치도 쌓고, 압도적인 업계 최고 수당도 벌 찬스입니다!
@@ -59,9 +59,10 @@ export default function RecruitTab() {
             <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-50 rounded-bl-full pointer-events-none" />
             <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block text-left">DIRECT SALES SHARE</span>
             <span className="text-3xl font-black text-emerald-600 tracking-tight block text-left pt-1">
-              판매가의 20% <span className="text-xs text-slate-400 font-semibold tracking-normal">(1건당 약 10만 원)</span>
+              판매가의 20% <span className="text-xs text-slate-400 font-semibold tracking-normal">(크리에이터 한정: 1건당 약 10만 원)</span>
             </span>
             <p className="text-xs text-slate-500 text-left leading-relaxed font-medium">
+              <strong className="text-amber-600 text-[11px] block mb-1">※ 멤버십을 6장 구매한 분들에게는 '크리에이터'라는 권위있는 명칭이 주어지며, 오직 크리에이터에게만 이 20% 리베이트가 보장됩니다!</strong>
               모집 인원에 비례하여 누수 없이 쏟아지는 업계 최대 수준의 프리미엄 보증 마커스 리베이트 마진을 확보하세요.
             </p>
           </div>
@@ -94,7 +95,7 @@ export default function RecruitTab() {
 
         {/* Benefits & Safety Net Summary */}
         <div className="p-6 bg-amber-50/50 rounded-3xl border border-amber-200/70 text-left space-y-4 max-w-3xl mx-auto">
-          <h4 className="text-sm font-black text-amber-800 uppercase tracking-wider">영업 사원만의 평생 한정판 독점 혜택 리포트</h4>
+          <h4 className="text-sm font-black text-amber-800 uppercase tracking-wider">크리에이터만의 평생 한정판 독점 혜택 리포트</h4>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-semibold text-slate-700">
             {[

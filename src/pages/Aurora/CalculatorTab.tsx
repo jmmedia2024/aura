@@ -128,10 +128,10 @@ export default function CalculatorTab() {
           <div className="space-y-3">
             <div className="flex justify-between items-end">
               <label className="text-xs md:text-sm font-black text-slate-800 uppercase tracking-tight block">
-                🏢 산하 신규지역 대리점 개척/유치 수
+                🏢 산하 신규 지역 파트너 라운지 개척/유치 수
               </label>
               <span className="text-sm font-black text-amber-500">
-                {referredAgencies} 개 대리점 <span className="text-[10px] text-slate-400 font-medium">({(referredAgencies * AGENCY_REFERRAL_PAYOUT).toLocaleString()}원 분)</span>
+                {referredAgencies} 개 파트너 라운지 <span className="text-[10px] text-slate-400 font-medium">({(referredAgencies * AGENCY_REFERRAL_PAYOUT).toLocaleString()}원 분)</span>
               </span>
             </div>
             <input 
@@ -159,8 +159,8 @@ export default function CalculatorTab() {
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <span className="text-xs font-black text-slate-800 block">🏢 본인 지역 대리점 별도 운영 여부</span>
-                <span className="text-[10px] text-slate-400 font-bold block leading-relaxed">대리점 권한 획득 시 산하 마케터 총 매출의 추가 10% 지급</span>
+                <span className="text-xs font-black text-slate-800 block">🏢 본인 지역 파트너 라운지 별도 운영 여부</span>
+                <span className="text-[10px] text-slate-400 font-bold block leading-relaxed">라운지 권한 획득 시 산하 마케터 총 매출의 추가 10% 지급</span>
               </div>
               <input 
                 type="checkbox"
@@ -178,7 +178,7 @@ export default function CalculatorTab() {
               >
                 <div className="flex justify-between items-end">
                   <label className="text-[11px] font-black text-slate-600 uppercase tracking-wider block">
-                    📈 대리점 관할 소속사원 분 연쇄 총매출 목표 (3개월 분)
+                    📈 파트너 라운지 관할 소속 마케터 분 연쇄 총매출 목표 (3개월 분)
                   </label>
                   <span className="text-xs font-black text-emerald-600 font-mono">
                     {agencySales.toLocaleString()} 원 <span className="text-[10px] text-slate-400 font-bold">({(agencySales * AGENCY_OVERRIDE_RATE).toLocaleString()}원 분)</span>
@@ -234,12 +234,12 @@ export default function CalculatorTab() {
                 <span className="font-mono text-indigo-400 font-extrabold">{agentReferralBonus3Months.toLocaleString()}원</span>
               </div>
               <div className="flex justify-between font-medium">
-                <span className="text-slate-400">④ 대리점 연쇄 개척 일회성 포상</span>
+                <span className="text-slate-400">④ 파트너 라운지 연쇄 개척 일회성 포상</span>
                 <span className="font-mono text-amber-400 font-extrabold">{agencyReferralEarned.toLocaleString()}원</span>
               </div>
               {isAgencyOwner && (
                 <div className="flex justify-between font-medium">
-                  <span className="text-slate-400">⑤ 대리점 승급 10% 오버라이딩</span>
+                  <span className="text-slate-400">⑤ 파트너 라운지 승급 10% 오버라이딩</span>
                   <span className="font-mono text-emerald-400 font-extrabold">{agencyOverrideEarned.toLocaleString()}원</span>
                 </div>
               )}

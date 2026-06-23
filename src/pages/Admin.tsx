@@ -575,7 +575,7 @@ export default function Admin() {
                               usr.role === 'Sales' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' :
                               'bg-slate-50 text-slate-500'
                             }`}>
-                              {usr.role === 'Admin' ? '관리자' : usr.role === 'Sales' ? '영업사원' : '일반회원'}
+                              {usr.role === 'Admin' ? '관리자' : usr.role === 'Sales' ? '크리에이터' : '일반회원'}
                             </span>
                           </td>
                           <td className="p-4 text-xs font-semibold text-slate-500">{usr.phoneNumber || '미등록'}</td>
@@ -1061,7 +1061,7 @@ export default function Admin() {
                       className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
                     >
                       <option value="User">일반 회원 (User)</option>
-                      <option value="Sales">영업사원 (Sales)</option>
+                      <option value="Sales">크리에이터 (Sales)</option>
                       <option value="Admin">관리자 (Admin)</option>
                     </select>
                   </div>

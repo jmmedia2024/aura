@@ -18,7 +18,8 @@ import {
   Settings,
   HelpCircle,
   Gem,
-  Check
+  Check,
+  Copy
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFirebase } from '../lib/FirebaseContext';
@@ -51,6 +52,18 @@ export default function MyPage() {
   const [downlineUsers, setDownlineUsers] = useState<UserProfile[]>([]);
   const [fetching, setFetching] = useState(false);
   const [errorOriginal, setErrorOriginal] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = () => {
+    if (!user || !user.email) return;
+    const link = `${window.location.origin}/signup?ref=${encodeURIComponent(user.email)}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(err => {
+      console.error("Failed to copy link: ", err);
+    });
+  };
 
   const isSalesOrAdmin = user && (user.email === 'new2020.jeonil@gmail.com' || (profile && (profile.role === 'Sales' || profile.role === 'Admin')));
 
@@ -170,7 +183,7 @@ export default function MyPage() {
 
                 {node.user.role === 'Sales' && (
                   <span className="text-[9px] px-1.5 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded font-black">
-                    영업사원
+                    크리에이터
                   </span>
                 )}
               </div>
@@ -328,7 +341,7 @@ export default function MyPage() {
                     <div>
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">권한 레벨</span>
                       <p className="text-xs font-black inline-flex items-center gap-1 px-2.5 py-0.5 bg-blue-50 text-blue-600 rounded-full mt-1 border border-blue-100">
-                        {profile?.role === 'Sales' ? '정비공인 파트너 영업사원' : profile?.role === 'Admin' ? '통합 최고 관리자' : '팬덤 서포터 정회원'}
+                        {profile?.role === 'Sales' ? '정식 공인 파트너 크리에이터' : profile?.role === 'Admin' ? '통합 최고 관리자' : '팬덤 서포터 정회원'}
                       </p>
                     </div>
                   </div>
@@ -391,26 +404,39 @@ export default function MyPage() {
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-6 rounded-[2rem] bg-gradient-to-r from-blue-650 via-indigo-650 to-slate-900 border border-blue-500/10 shadow-xl flex flex-col justify-between text-white gap-6 relative overflow-hidden"
+                className="p-6 rounded-[2rem] bg-gradient-to-r from-blue-600 via-indigo-650 to-slate-900 border border-blue-550/10 shadow-xl flex flex-col justify-between text-white gap-6 relative overflow-hidden"
               >
                 <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 text-white shadow-xl shrink-0">
-                    <Award className="w-6 h-6 text-amber-305 animate-pulse" />
+                    <Copy className="w-5 h-5 text-amber-300 animate-pulse" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-base font-black tracking-tight text-white">나의 지정 팬 정보/디자인 선택</h3>
+                    <span className="text-[9px] font-black text-blue-300 tracking-wider uppercase block font-mono">My Referral Link</span>
+                    <h3 className="text-base font-black tracking-tight text-white">나의 전용 추천인 가입 링크</h3>
                     <p className="text-[11px] text-white/75 leading-relaxed font-semibold">
-                      원하는 최애 팬 사진 또는 정교한 템플릿을 연계하고 나만의 전용 멤버십을 실시간 탑재하세요.
+                      아래의 고유 추천인 파트너 링크를 전달하여 신규 가입자가 추천인 입력 없이 즉각적으로 가입하도록 공유해 보세요.
                     </p>
                   </div>
                 </div>
-                <Link
-                  to="/apply"
-                  className="w-full text-center py-3 bg-white text-blue-600 tracking-tight font-black text-xs rounded-xl shadow-lg hover:bg-slate-50 transition-all block"
+                
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="w-full text-center py-3.5 bg-white text-blue-600 tracking-tight font-black text-xs rounded-xl shadow-lg hover:bg-slate-50 hover:text-blue-700 transition-all flex items-center justify-center gap-2"
                 >
-                  나의 팬 선택 및 실시간 등록 🌟
-                </Link>
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4 text-emerald-500 animate-bounce" />
+                      <span className="text-emerald-600">추천인 가입 링크 복사 완료 📋</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4 text-blue-500" />
+                      <span>원클릭 추천인 가입 링크 복사하기 🔗</span>
+                    </>
+                  )}
+                </button>
               </motion.div>
 
               <motion.div
@@ -576,10 +602,10 @@ export default function MyPage() {
                     <Award className="w-6 h-6 animate-bounce" style={{ animationDuration: '4s' }} />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-lg font-black text-slate-900 tracking-tight">오로라 특별 영업사원 신청하기</h3>
+                    <h3 className="text-lg font-black text-slate-900 tracking-tight">오로라 특별 크리에이터 신청하기</h3>
                     <p className="text-xs text-slate-500 leading-relaxed font-semibold">
                       단순 응원을 넘어, 비즈니스 동반자로써 마일리지를 정밀 누적하고 연간 60%에 수렴하는 한정판 영업 수수료 수당 권한을 획득하고 싶으신가요?
-                      지금 파트너 영업사원으로 무료 승격 신청을 접수할 수 있습니다.
+                      지금 파트너 크리에이터로 무료 승격 신청을 접수할 수 있습니다.
                     </p>
                   </div>
                 </div>

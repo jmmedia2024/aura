@@ -20,7 +20,7 @@ export default function AuroraHub() {
   const tabs = [
     { id: 'plan' as TabType, label: '영업 계획서 📄', component: <PlanTab /> },
     { id: 'org' as TabType, label: '조직 운영 제안서 🏢', component: <OrganizationTab /> },
-    { id: 'recruit' as TabType, label: '영업사원 대모집 📣', component: <RecruitTab /> },
+    { id: 'recruit' as TabType, label: '크리에이터 대모집 📣', component: <RecruitTab /> },
     { id: 'calc' as TabType, label: '수익 시뮬레이터 🧮', component: <CalculatorTab /> }
   ];
 
@@ -119,7 +119,7 @@ export default function AuroraHub() {
           >
             <div className="space-y-1">
               <span className="text-[10px] font-black text-blue-600 tracking-wider block uppercase">Join the Team</span>
-              <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">전문 영업사원 및 대리점 가맹 상담 신청</h3>
+              <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">전문 크리에이터 및 지역 파트너 라운지 개설 상담 신청</h3>
               <p className="text-slate-400 text-xs font-semibold leading-relaxed">
                 정보를 입력하시면 담당 지역 지사장이 24시간 이내 휴대폰으로 직접 유선 연락을 드립니다.
               </p>
@@ -166,7 +166,7 @@ export default function AuroraHub() {
                   <textarea
                     value={applyMemo}
                     onChange={(e) => setApplyMemo(e.target.value)}
-                    placeholder="예: 서울 강남 대리점 유무 또는 광주 권역 프리랜서 투잡을 희망합니다."
+                    placeholder="예: 서울 강남 지역 파트너 라운지 개설 유무 또는 광주 권역 프리랜서 활동을 희망합니다."
                     rows={3}
                     className="w-full bg-slate-50/50 focus:bg-white border border-slate-100 focus:border-blue-500 rounded-xl px-4 py-3 text-xs font-bold text-slate-800 focus:outline-none transition-colors resize-none leading-relaxed"
                   />

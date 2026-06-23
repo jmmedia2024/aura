@@ -186,7 +186,7 @@ export default function Signup() {
                   : 'text-slate-400 hover:text-slate-600'
               }`}
             >
-              영업사원 가입
+              크리에이터 가입
             </button>
           </div>
 
@@ -239,7 +239,7 @@ export default function Signup() {
 
               {signUpRole === 'Sales' && (
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">추천인 이메일 (영업사원 - 선택)</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">추천인 이메일 (크리에이터 - 선택)</label>
                   <div className="relative">
                     <input 
                       type="email" 
