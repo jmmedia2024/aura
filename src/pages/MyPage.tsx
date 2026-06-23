@@ -56,13 +56,43 @@ export default function MyPage() {
 
   const handleCopyLink = () => {
     if (!user || !user.email) return;
-    const link = `${window.location.origin}/signup?ref=${encodeURIComponent(user.email)}`;
-    navigator.clipboard.writeText(link).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }).catch(err => {
-      console.error("Failed to copy link: ", err);
-    });
+    const link = `https://fandomaurora.com/signup?ref=${encodeURIComponent(user.email)}`;
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch(err => {
+        console.error("Clipboard copy failed, trying fallback:", err);
+        fallbackCopyText(link);
+      });
+    } else {
+      fallbackCopyText(link);
+    }
+  };
+
+  const fallbackCopyText = (text: string) => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      // Avoid scrolling to bottom
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      if (successful) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } else {
+        console.error("Fallback copy command was unsuccessful");
+      }
+    } catch (err) {
+      console.error("Fallback copy error:", err);
+    }
   };
 
   const isSalesOrAdmin = user && (user.email === 'new2020.jeonil@gmail.com' || (profile && (profile.role === 'Sales' || profile.role === 'Admin')));

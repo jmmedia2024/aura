@@ -99,15 +99,16 @@ export default function OrganizationTab() {
 
       setActivities(prev => {
         const updated = prev.map((act) => {
+          if (!act || !act.time) return act;
           if (act.time === '방금 전') return { ...act, time: '1분 전' };
           if (act.time === '1분 전') return { ...act, time: '5분 전' };
           if (act.time === '4분 전') return { ...act, time: '10분 전' };
           if (act.time === '5분 전') return { ...act, time: '12분 전' };
           if (act.time === '8분 전') return { ...act, time: '18분 전' };
           if (act.time === '15분 전') return { ...act, time: '25분 전' };
-          if (act.time.includes('분 전')) {
+          if (typeof act.time === 'string' && act.time.includes('분 전')) {
             const minutes = parseInt(act.time.replace('분 전', ''), 10);
-            return { ...act, time: `${minutes + 5}분 전` };
+            return { ...act, time: `${isNaN(minutes) ? 30 : minutes + 5}분 전` };
           }
           return act;
         });
@@ -524,7 +525,7 @@ export default function OrganizationTab() {
             <span>HQ / 전국 거점 지사</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 bg-indigo-505 bg-indigo-500 rounded-sm" />
+            <span className="w-2.5 h-2.5 bg-indigo-500 rounded-sm" />
             <span>오프라인 파트너 라운지</span>
           </div>
           <div className="flex items-center gap-1.5">
