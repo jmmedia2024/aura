@@ -759,16 +759,20 @@ export default function OrganizationTab() {
         </div>
         <h4 className="font-black text-slate-800 text-lg">2026 오로라 전국 로드맵 및 예상 조직 목표</h4>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 pt-2">
           {[
-            { label: "전국 거점 지사", value: "17개", color: "text-blue-600" },
-            { label: "지역 파트너 라운지", value: "400개", color: "text-indigo-600" },
-            { label: "소속 활동 크리에이터", value: "5,000명", color: "text-amber-500" },
-            { label: "최종 가입 목표 회원", value: "100,000명", color: "text-emerald-500" }
+            { label: "전국 거점 지사", emoji: "🏢", value: "17개", color: "text-blue-600" },
+            { label: "지역 파트너 라운지", emoji: "🏪", value: "400개", color: "text-indigo-600" },
+            { label: "소속 활동 크리에이터", emoji: "🎙️", value: "5,000명", color: "text-amber-500" },
+            { label: "최종 가입 목표 회원", emoji: "👥", value: "100,000명", color: "text-emerald-500" }
           ].map((item, idx) => (
-            <div key={idx} className="bg-white p-5 rounded-2xl border border-blue-50 relative overflow-hidden shadow-sm">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">{item.label}</span>
-              <span className={`text-2xl md:text-3xl font-display font-black tracking-tight ${item.color} block mt-1`}>
+            <div key={idx} className="bg-white p-4 md:p-5 rounded-2xl border border-blue-50 relative overflow-hidden shadow-sm flex flex-col justify-between items-center text-center">
+              <span className="text-2xl md:text-xl md:mb-1 block">{item.emoji}</span>
+              <span className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-tight block">
+                <span className="hidden md:inline">{item.label}</span>
+                <span className="md:hidden">{item.label.replace('소속 활동 ', '').replace('최종 가입 ', '')}</span>
+              </span>
+              <span className={`text-xl md:text-3xl font-display font-black tracking-tight ${item.color} block mt-1`}>
                 {item.value}
               </span>
             </div>

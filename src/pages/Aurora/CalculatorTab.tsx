@@ -221,25 +221,45 @@ export default function CalculatorTab() {
             <div className="h-px bg-slate-800" />
 
             <div className="space-y-3.5 text-xs">
-              <div className="flex justify-between font-medium">
-                <span className="text-slate-400">① 본사 기본 고정 활동지원금</span>
+              <div className="flex justify-between font-medium items-center">
+                <span className="text-slate-400 flex items-center gap-1">
+                  <span>① 💵</span>
+                  <span className="hidden sm:inline">본사 기본 고정 활동지원금</span>
+                  <span className="sm:hidden text-[11px]">기본 지원금</span>
+                </span>
                 <span className="font-mono text-slate-200">{basicSupport3Months.toLocaleString()}원</span>
               </div>
-              <div className="flex justify-between font-medium">
-                <span className="text-slate-400">② 직접 영입 멤버십 총 수수료</span>
+              <div className="flex justify-between font-medium items-center">
+                <span className="text-slate-400 flex items-center gap-1">
+                  <span>② 🎟️</span>
+                  <span className="hidden sm:inline">직접 영입 멤버십 총 수수료</span>
+                  <span className="sm:hidden text-[11px]">직접 수수료</span>
+                </span>
                 <span className="font-mono text-blue-400 font-extrabold">{directCommissionEarned.toLocaleString()}원</span>
               </div>
-              <div className="flex justify-between font-medium">
-                <span className="text-slate-400">③ 동료 영입 활동 매칭 수당</span>
+              <div className="flex justify-between font-medium items-center">
+                <span className="text-slate-400 flex items-center gap-1">
+                  <span>③ 🤝</span>
+                  <span className="hidden sm:inline">동료 영입 활동 매칭 수당</span>
+                  <span className="sm:hidden text-[11px]">매칭 수당</span>
+                </span>
                 <span className="font-mono text-indigo-400 font-extrabold">{agentReferralBonus3Months.toLocaleString()}원</span>
               </div>
-              <div className="flex justify-between font-medium">
-                <span className="text-slate-400">④ 파트너 라운지 연쇄 개척 일회성 포상</span>
+              <div className="flex justify-between font-medium items-center">
+                <span className="text-slate-400 flex items-center gap-1">
+                  <span>④ 🏢</span>
+                  <span className="hidden sm:inline">파트너 라운지 연쇄 개척 일회성 포상</span>
+                  <span className="sm:hidden text-[11px]">라운지 유치</span>
+                </span>
                 <span className="font-mono text-amber-400 font-extrabold">{agencyReferralEarned.toLocaleString()}원</span>
               </div>
               {isAgencyOwner && (
-                <div className="flex justify-between font-medium">
-                  <span className="text-slate-400">⑤ 파트너 라운지 승급 10% 오버라이딩</span>
+                <div className="flex justify-between font-medium items-center">
+                  <span className="text-slate-400 flex items-center gap-1">
+                    <span>⑤ 📈</span>
+                    <span className="hidden sm:inline">파트너 라운지 승급 10% 오버라이딩</span>
+                    <span className="sm:hidden text-[11px]">관할 오버라이딩</span>
+                  </span>
                   <span className="font-mono text-emerald-400 font-extrabold">{agencyOverrideEarned.toLocaleString()}원</span>
                 </div>
               )}

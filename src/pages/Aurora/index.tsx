@@ -18,10 +18,10 @@ export default function AuroraHub() {
   const [submitted, setSubmitted] = useState(false);
 
   const tabs = [
-    { id: 'plan' as TabType, label: '영업 계획서 📄', component: <PlanTab /> },
-    { id: 'org' as TabType, label: '조직 운영 제안서 🏢', component: <OrganizationTab /> },
-    { id: 'recruit' as TabType, label: '크리에이터 대모집 📣', component: <RecruitTab /> },
-    { id: 'calc' as TabType, label: '수익 시뮬레이터 🧮', component: <CalculatorTab /> }
+    { id: 'plan' as TabType, label: '영업 계획서', emoji: '📄', component: <PlanTab /> },
+    { id: 'org' as TabType, label: '조직 운영 제안서', emoji: '🏢', component: <OrganizationTab /> },
+    { id: 'recruit' as TabType, label: '크리에이터 대모집', emoji: '📣', component: <RecruitTab /> },
+    { id: 'calc' as TabType, label: '수익 시뮬레이터', emoji: '🧮', component: <CalculatorTab /> }
   ];
 
   const handleApplySubmit = (e: React.FormEvent) => {
@@ -38,26 +38,27 @@ export default function AuroraHub() {
   };
 
   return (
-    <div className="min-h-screen pt-32 pb-24 bg-white text-slate-800 relative overflow-hidden">
+    <div className="min-h-screen pt-28 md:pt-32 pb-24 bg-white text-slate-800 relative overflow-hidden">
       {/* Decorative backdrop blobs (very subtle, high-key eyesafe) */}
       <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-r from-blue-50/50 to-indigo-50/30 rounded-full blur-[140px] pointer-events-none" />
       
-      <div className="max-w-7xl mx-auto px-5 md:px-10 space-y-10 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 md:px-10 space-y-8 md:space-y-10 relative z-10">
         
         {/* Navigation Breadcrumb & Backbutton */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-100 pb-6">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
-              <Link to="/mypage" className="p-2.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors rounded-full text-slate-500 shadow-sm">
+              <Link to="/mypage" className="p-2 md:p-2.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors rounded-full text-slate-500 shadow-sm">
                 <ArrowLeft className="w-4 h-4" />
               </Link>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-wider">
                 <Sparkles className="w-3 h-3 text-blue-500 animate-pulse" />
-                <span>Aurora Sales Rep Workspace</span>
+                <span className="hidden sm:inline">Aurora Sales Rep Workspace</span>
+                <span className="sm:hidden">AURORA Rep 🌟</span>
               </div>
             </div>
             
-            <h1 className="text-3xl md:text-4.5xl font-black text-slate-900 tracking-tight leading-none pt-1">
+            <h1 className="text-2.5xl md:text-4.5xl font-black text-slate-900 tracking-tight leading-tight pt-1">
               팬덤 오로라 전문 영업 지원 센터
             </h1>
             <p className="text-slate-400 text-xs md:text-sm font-semibold">
@@ -67,27 +68,34 @@ export default function AuroraHub() {
 
           <button
             onClick={() => setShowApplyModal(true)}
-            className="px-6 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-slate-900 text-white text-xs font-black rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.01] active:scale-[0.99] transition-all whitespace-nowrap"
+            className="px-5 py-3.5 md:px-6 md:py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-slate-900 text-white text-xs font-black rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.01] active:scale-[0.99] transition-all whitespace-nowrap"
           >
             🚀 지금 영업 조직원 신청하기
           </button>
         </div>
 
         {/* Tab Selection Header (Glassmorphic Container with 3D shadow) */}
-        <div className="bg-slate-50/75 backdrop-blur-md p-2 rounded-2.5xl border border-slate-200/60 shadow-[0_4px_30px_rgba(0,0,0,0.02)] flex flex-wrap gap-2">
+        <div className="bg-slate-50/75 backdrop-blur-md p-1.5 md:p-2 rounded-2xl md:rounded-2.5xl border border-slate-200/60 shadow-[0_4px_30px_rgba(0,0,0,0.02)] flex flex-wrap md:flex-nowrap gap-1.5 md:gap-2">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 min-w-[140px] py-4 rounded-xl text-xs font-extrabold tracking-tight transition-all text-center select-none ${
+                className={`flex-1 min-w-[70px] md:min-w-[140px] py-2.5 md:py-4 rounded-xl text-xs font-extrabold tracking-tight transition-all text-center select-none ${
                   isActive
-                    ? 'bg-white text-blue-600 shadow-lg shadow-slate-200/50 border border-slate-200 font-black'
+                    ? 'bg-white text-blue-600 shadow-md md:shadow-lg shadow-slate-200/50 border border-slate-200 font-black'
                     : 'text-slate-500 hover:bg-white/40 hover:text-slate-800'
                 }`}
               >
-                {tab.label}
+                <div className="flex flex-col md:flex-row items-center justify-center gap-1">
+                  <span className="text-xl md:text-sm">{tab.emoji}</span>
+                  <span className="hidden md:inline">{tab.label}</span>
+                  {/* For mobile, display emoticon-heavy representation as requested */}
+                  <span className="md:hidden text-[9px] block whitespace-nowrap mt-0.5 opacity-90">
+                    {tab.id === 'plan' ? '계획서' : tab.id === 'org' ? '조직' : tab.id === 'recruit' ? '모집' : '수익계산'}
+                  </span>
+                </div>
               </button>
             );
           })}

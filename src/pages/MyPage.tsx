@@ -209,26 +209,29 @@ export default function MyPage() {
               {node.user.displayName ? node.user.displayName.substring(0, 2) : '유저'}
             </div>
             <div className="space-y-1">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-bold text-slate-900 text-sm">{node.user.displayName}</span>
                 <span className={`text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider ${
                   node.user.tier === 'Legend Tier' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
                   node.user.tier === 'Gold' ? 'bg-slate-100 text-slate-800' :
                   'bg-blue-50 text-blue-600'
                 }`}>
-                  {node.user.tier}
+                  <span className="md:inline">{node.user.tier}</span>
+                  <span className="md:hidden">
+                    {node.user.tier === 'Legend Tier' ? '👑 레전드' : node.user.tier === 'Gold' ? '🪙 골드' : '🌱 일반'}
+                  </span>
                 </span>
 
                 {node.user.selectedFanName && (
                   <span className="text-[9px] px-2 py-0.5 bg-rose-50 text-rose-600 rounded-full font-black flex items-center gap-0.5 border border-rose-100">
                     <Heart className="w-2.5 h-2.5 fill-rose-500 text-rose-500" />
-                    <span>{node.user.selectedFanName.split(' ')[1] || node.user.selectedFanName.split('(')[0]} 팬</span>
+                    <span>{node.user.selectedFanName.split(' ')[1] || node.user.selectedFanName.split('(')[0]}</span>
                   </span>
                 )}
 
                 {node.user.role === 'Sales' && (
                   <span className="text-[9px] px-1.5 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded font-black">
-                    크리에이터
+                    🎙️ <span className="hidden sm:inline">크리에이터</span>
                   </span>
                 )}
               </div>
@@ -241,9 +244,11 @@ export default function MyPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-50 text-slate-400 text-xs font-semibold">
-            <Calendar className="w-4 h-4 text-slate-300" />
-            <span>가입일: {formattedDate}</span>
+          <div className="flex items-center gap-1.5 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-50 text-slate-400 text-xs font-semibold shrink-0">
+            <span>📆</span>
+            <span className="text-[11px] text-slate-500 font-bold">
+              <span className="hidden sm:inline">가입일: </span>{formattedDate}
+            </span>
           </div>
         </motion.div>
 
@@ -513,20 +518,30 @@ export default function MyPage() {
             </div>
 
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <motion.div 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-4"
+                className="p-4 md:p-6 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-3 md:space-y-4"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-slate-400 uppercase tracking-wider">나의 직속 추천인 (1차)</span>
-                  <div className="w-10 h-10 bg-blue-50 text-blue-650 rounded-xl flex items-center justify-center font-bold text-xs">1차</div>
+                  <span className="text-[11px] md:text-xs font-black text-slate-800 uppercase tracking-tight flex items-center gap-1">
+                    <span className="text-lg md:text-sm">🧑‍🤝‍🧑</span>
+                    <span className="hidden sm:inline">나의 직속 추천인 (1차)</span>
+                    <span className="sm:hidden">직속추천</span>
+                  </span>
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-50 text-blue-650 rounded-lg md:rounded-xl flex items-center justify-center font-bold text-[10px] md:text-xs shrink-0">1차</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-3xl font-black text-slate-900">{totalDirectCount}명</div>
-                  <p className="text-[11px] text-slate-450 font-semibold">나의 영업 이메일로 직속 가입한 회원</p>
+                  <div className="text-2xl md:text-3xl font-black text-slate-900 flex items-baseline gap-0.5">
+                    <span>{totalDirectCount}</span>
+                    <span className="text-xs font-bold text-slate-400">명</span>
+                  </div>
+                  <p className="text-[11px] text-slate-450 font-semibold hidden md:block">나의 영업 이메일로 직속 가입한 회원</p>
+                  <p className="text-[10px] text-slate-400 font-bold md:hidden flex items-center gap-1">
+                    📥 직속 연계
+                  </p>
                 </div>
               </motion.div>
 
@@ -534,15 +549,25 @@ export default function MyPage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-4"
+                className="p-4 md:p-6 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-3 md:space-y-4"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-slate-400 uppercase tracking-wider">연쇄 영업 추천인 (하위)</span>
-                  <div className="w-10 h-10 bg-[#e0e7ff] text-indigo-600 rounded-xl flex items-center justify-center font-bold text-xs">N차</div>
+                  <span className="text-[11px] md:text-xs font-black text-slate-800 uppercase tracking-tight flex items-center gap-1">
+                    <span className="text-lg md:text-sm">🔗</span>
+                    <span className="hidden sm:inline">연쇄 영업 추천인 (하위)</span>
+                    <span className="sm:hidden">연쇄추천</span>
+                  </span>
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-[#e0e7ff] text-indigo-600 rounded-lg md:rounded-xl flex items-center justify-center font-bold text-[10px] md:text-xs shrink-0">N차</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-3xl font-black text-slate-900">{totalIndirectCount}명</div>
-                  <p className="text-[11px] text-slate-450 font-semibold">내 추천회원들이 추가로 유치한 회원</p>
+                  <div className="text-2xl md:text-3xl font-black text-slate-900 flex items-baseline gap-0.5">
+                    <span>{totalIndirectCount}</span>
+                    <span className="text-xs font-bold text-slate-400">명</span>
+                  </div>
+                  <p className="text-[11px] text-slate-450 font-semibold hidden md:block">내 추천회원들이 추가로 유치한 회원</p>
+                  <p className="text-[10px] text-slate-400 font-bold md:hidden flex items-center gap-1">
+                    🚀 간접 유치
+                  </p>
                 </div>
               </motion.div>
 
@@ -550,17 +575,27 @@ export default function MyPage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-4"
+                className="p-4 md:p-6 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-3 md:space-y-4"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-slate-400 uppercase tracking-wider">총 네트워킹 가입 수</span>
-                  <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5" />
+                  <span className="text-[11px] md:text-xs font-black text-slate-800 uppercase tracking-tight flex items-center gap-1">
+                    <span className="text-lg md:text-sm">📈</span>
+                    <span className="hidden sm:inline">총 네트워킹 가입 수</span>
+                    <span className="sm:hidden">전체누적</span>
+                  </span>
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-emerald-50 text-emerald-600 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
+                    <TrendingUp className="w-4 h-4 md:w-5 md:h-5 animate-pulse" />
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-3xl font-black text-slate-900 text-emerald-600">{downlineUsers.length}명</div>
-                  <p className="text-[11px] text-slate-450 font-semibold">동료 네트워크를 통한 총합 수치</p>
+                  <div className="text-2xl md:text-3xl font-black text-emerald-650 flex items-baseline gap-0.5">
+                    <span>{downlineUsers.length}</span>
+                    <span className="text-xs font-bold text-slate-400">명</span>
+                  </div>
+                  <p className="text-[11px] text-slate-450 font-semibold hidden md:block">동료 네트워크를 통한 총합 수치</p>
+                  <p className="text-[10px] text-emerald-600 font-bold md:hidden flex items-center gap-1">
+                    🔥 총합 시너지
+                  </p>
                 </div>
               </motion.div>
 
@@ -568,17 +603,27 @@ export default function MyPage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-4"
+                className="p-4 md:p-6 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-3 md:space-y-4"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-slate-400 uppercase tracking-wider">레전드 멤버수</span>
-                  <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
-                    <Award className="w-5 h-5" />
+                  <span className="text-[11px] md:text-xs font-black text-slate-800 uppercase tracking-tight flex items-center gap-1">
+                    <span className="text-lg md:text-sm">👑</span>
+                    <span className="hidden sm:inline">레전드 멤버수</span>
+                    <span className="sm:hidden">우수레전드</span>
+                  </span>
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-amber-50 text-amber-600 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
+                    <Award className="w-4 h-4 md:w-5 md:h-5 animate-bounce" />
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-3xl font-black text-slate-900 text-amber-500">{legendTierCount}명</div>
-                  <p className="text-[11px] text-slate-450 font-semibold">우수 레전드 티어 가입자 실적</p>
+                  <div className="text-2xl md:text-3xl font-black text-amber-550 flex items-baseline gap-0.5">
+                    <span>{legendTierCount}</span>
+                    <span className="text-xs font-bold text-slate-400">명</span>
+                  </div>
+                  <p className="text-[11px] text-slate-450 font-semibold hidden md:block">우수 레전드 티어 가입자 실적</p>
+                  <p className="text-[10px] text-amber-605 font-bold md:hidden flex items-center gap-1">
+                    💎 우수 실적
+                  </p>
                 </div>
               </motion.div>
             </div>
