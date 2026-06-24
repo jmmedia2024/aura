@@ -1,13 +1,12 @@
 import { motion, useScroll, useSpring } from 'motion/react';
 import { Link } from 'react-router-dom';
-import { useFirebase } from '../lib/FirebaseContext';
-import { auth } from '../lib/firebase';
+import { useAuth } from '../lib/AuthContext';
 import { User, LogOut, Settings } from 'lucide-react';
 import Logo from './Logo';
 
 export default function Header() {
   const { scrollYProgress } = useScroll();
-  const { user, profile } = useFirebase();
+  const { user, profile, signOut } = useAuth();
   const isAdmin = user && user.email === 'new2020.jeonil@gmail.com';
 
   const scaleX = useSpring(scrollYProgress, {
@@ -18,7 +17,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      await auth.signOut();
+      await signOut();
       window.location.reload();
     } catch (error) {
       console.error("Logout failed:", error);

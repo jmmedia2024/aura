@@ -9,11 +9,11 @@ import Admin from './pages/Admin';
 import MyPage from './pages/MyPage';
 import Apply from './pages/Apply';
 import Aurora from './pages/Aurora';
-import { FirebaseProvider } from './lib/FirebaseContext';
+import { AuthProvider } from './lib/AuthContext';
 
 export default function App() {
   return (
-    <FirebaseProvider>
+    <AuthProvider>
       <Router>
         <div className="min-h-screen bg-white font-sans scroll-smooth">
           <Header />
@@ -33,6 +33,6 @@ export default function App() {
           <Footer />
         </div>
       </Router>
-    </FirebaseProvider>
+    </AuthProvider>
   );
 }

@@ -22,7 +22,7 @@ import {
   Copy
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useFirebase } from '../lib/FirebaseContext';
+import { useAuth } from '../lib/AuthContext';
 import { supabase } from '../lib/supabase';
 
 interface UserProfile {
@@ -46,7 +46,7 @@ interface TreeNode {
 }
 
 export default function MyPage() {
-  const { user, profile, loading } = useFirebase();
+  const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
   const [downlineUsers, setDownlineUsers] = useState<UserProfile[]>([]);
   const [fetching, setFetching] = useState(false);

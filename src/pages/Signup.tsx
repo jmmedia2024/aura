@@ -2,8 +2,6 @@ import { motion } from 'motion/react';
 import { Mail, Lock, User, UserPlus, Loader2, Users, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../lib/firebase';
 import { supabase } from '../lib/supabase';
 
 export default function Signup() {
@@ -22,27 +20,28 @@ export default function Signup() {
     setError('');
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (signUpError) throw signUpError;
+      const user = authData.user;
+      if (!user) throw new Error('회원가입에 실패했습니다.');
 
       let ancestors: string[] = [];
       const recruiterEmailClean = signUpRole === 'Sales' ? recruiterEmail.trim() : '';
 
       if (recruiterEmailClean) {
-        try {
-          const { data: recruiterData, error: recruiterError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('email', recruiterEmailClean)
-            .single();
+        const { data: recruiterData } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', recruiterEmailClean)
+          .single();
 
-          if (!recruiterError && recruiterData) {
-            ancestors = [recruiterEmailClean, ...(recruiterData.ancestors || [])];
-          } else {
-            ancestors = [recruiterEmailClean];
-          }
-        } catch (searchError) {
-          console.error("Error looking up recruiter:", searchError);
+        if (recruiterData) {
+          ancestors = [recruiterEmailClean, ...(recruiterData.ancestors || [])];
+        } else {
           ancestors = [recruiterEmailClean];
         }
       }
@@ -50,7 +49,7 @@ export default function Signup() {
       const { error: supabaseError } = await supabase
         .from('users')
         .insert([{
-          userId: user.uid,
+          userId: user.id,
           email: email,
           displayName: displayName,
           tier: signUpRole === 'Sales' ? 'Gold' : 'Basic',
@@ -66,13 +65,7 @@ export default function Signup() {
       navigate('/');
     } catch (err: any) {
       console.error(err);
-      if (err.code === 'auth/operation-not-allowed' || (err.message && err.message.includes('operation-not-allowed'))) {
-        setError('파이어베이스 설정 오류: 이메일/비밀번호 가입 방식이 활성화되어 있지 않습니다. 아래의 구글 로그인 간편가입을 통해 1초 만에 완료하여 보너스를 받아보세요.');
-      } else if (err.code === 'auth/email-already-in-use') {
-        setError('이미 사용 중인 이메일 주소입니다. 다른 이메일로 가입하시거나 로그인해 주세요.');
-      } else {
-        setError(err.message || '회원가입 중 오류가 발생했습니다.');
-      }
+      setError(err.message || '회원가입 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -82,70 +75,13 @@ export default function Signup() {
     setLoading(true);
     setError('');
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      const { data: existingUser, error: fetchError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('userId', user.uid)
-        .single();
-
-      if (!existingUser) {
-        const isDefaultAdmin = user.email === 'new2020.jeonil@gmail.com';
-        
-        let ancestors: string[] = [];
-        const recruiterEmailClean = signUpRole === 'Sales' ? recruiterEmail.trim() : '';
-
-        if (recruiterEmailClean) {
-          try {
-            const { data: recruiterData, error: recruiterError } = await supabase
-              .from('users')
-              .select('*')
-              .eq('email', recruiterEmailClean)
-              .single();
-
-            if (!recruiterError && recruiterData) {
-              ancestors = [recruiterEmailClean, ...(recruiterData.ancestors || [])];
-            } else {
-              ancestors = [recruiterEmailClean];
-            }
-          } catch (searchError) {
-            console.error("Error looking up recruiter:", searchError);
-            ancestors = [recruiterEmailClean];
-          }
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
         }
-
-        const { error: insertError } = await supabase
-          .from('users')
-          .insert([{
-            userId: user.uid,
-            email: user.email || '',
-            displayName: user.displayName || displayName || '유저',
-            tier: isDefaultAdmin ? 'Legend Tier' : (signUpRole === 'Sales' ? 'Gold' : 'Basic'),
-            role: isDefaultAdmin ? 'Admin' : signUpRole,
-            referredByEmail: recruiterEmailClean,
-            ancestors: ancestors,
-            phoneNumber: '',
-            createdAt: new Date().toISOString(),
-          }]);
-        
-        if (insertError) throw insertError;
-      } else {
-        if (user.email === 'new2020.jeonil@gmail.com') {
-          if (existingUser.role !== 'Admin' || existingUser.tier !== 'Legend Tier') {
-            await supabase
-              .from('users')
-              .update({
-                role: 'Admin',
-                tier: 'Legend Tier',
-              })
-              .eq('userId', user.uid);
-          }
-        }
-      }
-      navigate('/');
+      });
+      if (authError) throw authError;
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Google 로그인 중 오류가 발생했습니다.');

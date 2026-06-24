@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Save, Loader2, Plus, Trash2, ArrowLeft, Users, Edit2, X, ShieldAlert, BadgeCheck, CreditCard, Check, Ban } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useFirebase } from '../lib/FirebaseContext';
+import { useAuth } from '../lib/AuthContext';
 import { getSettings, saveSettings } from '../lib/settings';
 import { supabase } from '../lib/supabase';
 
 export default function Admin() {
-  const { user, profile, loading } = useFirebase();
+  const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
   const [settings, setSettings] = useState<any>(null);
   const [saving, setSaving] = useState(false);

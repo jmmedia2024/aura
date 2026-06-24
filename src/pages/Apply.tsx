@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useFirebase } from '../lib/FirebaseContext';
+import { useAuth } from '../lib/AuthContext';
 import { supabase } from '../lib/supabase';
 import { 
   Sparkles, 
@@ -46,7 +46,7 @@ const PRESET_FANS = [
 ];
 
 export default function Apply() {
-  const { user, profile, loading: authLoading } = useFirebase();
+  const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -69,7 +69,7 @@ export default function Apply() {
           selectedFanPhotoUrl: imageUrl,
           selectedFanUpdatedAt: new Date().toISOString()
         })
-        .eq('userId', user.uid);
+        .eq('userId', user.id);
 
       if (error) throw error;
 

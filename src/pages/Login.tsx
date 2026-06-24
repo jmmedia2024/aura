@@ -2,8 +2,6 @@ import { motion } from 'motion/react';
 import { Mail, Lock, LogIn, Loader2, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../lib/firebase';
 import { supabase } from '../lib/supabase';
 
 export default function Login() {
@@ -19,15 +17,15 @@ export default function Login() {
     setError('');
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (loginError) throw loginError;
       navigate('/');
     } catch (err: any) {
       console.error(err);
-      if (err.code === 'auth/operation-not-allowed' || (err.message && err.message.includes('operation-not-allowed'))) {
-        setError('파이어베이스 설정 오류: 이메일/비밀번호 로그인 방식이 활성화되어 있지 않습니다. 아래의 "Google 계정으로 계속하기"를 이용해 간편 동기화 로그인 하시면 즉시 모든 기능을 사용하실 수 있습니다.');
-      } else {
-        setError('이메일 또는 비밀번호가 올바르지 않습니다.');
-      }
+      setError('이메일 또는 비밀번호가 올바르지 않습니다.');
     } finally {
       setLoading(false);
     }
@@ -37,45 +35,13 @@ export default function Login() {
     setLoading(true);
     setError('');
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      const { data: existingUser, error: fetchError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('userId', user.uid)
-        .single();
-
-      if (!existingUser) {
-        const isDefaultAdmin = user.email === 'new2020.jeonil@gmail.com';
-        await supabase
-          .from('users')
-          .insert([{
-            userId: user.uid,
-            email: user.email || '',
-            displayName: user.displayName || '사용자',
-            tier: isDefaultAdmin ? 'Legend Tier' : 'Basic',
-            role: isDefaultAdmin ? 'Admin' : 'User',
-            referredByEmail: '',
-            ancestors: [],
-            phoneNumber: '',
-            createdAt: new Date().toISOString(),
-          }]);
-      } else {
-        if (user.email === 'new2020.jeonil@gmail.com') {
-          if (existingUser.role !== 'Admin' || existingUser.tier !== 'Legend Tier') {
-            await supabase
-              .from('users')
-              .update({
-                role: 'Admin',
-                tier: 'Legend Tier',
-              })
-              .eq('userId', user.uid);
-          }
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
         }
-      }
-      navigate('/');
+      });
+      if (authError) throw authError;
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Google 로그인 중 오류가 발생했습니다.');
