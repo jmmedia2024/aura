@@ -54,6 +54,121 @@ export default function MyPage() {
   const [errorOriginal, setErrorOriginal] = useState('');
   const [copied, setCopied] = useState(false);
 
+  // User activity metrics for interactive level up
+  const [certifiedTickets, setCertifiedTickets] = useState(() => {
+    const saved = localStorage.getItem('demo_certified_tickets');
+    if (saved) return parseInt(saved, 10);
+    if (profile?.tier === 'Legend Tier') return 12;
+    if (profile?.tier === 'Gold') return 6;
+    return 2;
+  });
+
+  const [activityPoints, setActivityPoints] = useState(() => {
+    const saved = localStorage.getItem('demo_activity_points');
+    if (saved) return parseInt(saved, 10);
+    if (profile?.tier === 'Legend Tier') return 450;
+    if (profile?.tier === 'Gold') return 220;
+    return 80;
+  });
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem('demo_certified_tickets', certifiedTickets.toString());
+  }, [certifiedTickets]);
+
+  useEffect(() => {
+    localStorage.setItem('demo_activity_points', activityPoints.toString());
+  }, [activityPoints]);
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4000);
+  };
+
+  const handleCertifyTicket = () => {
+    const nextCount = certifiedTickets + 1;
+    setCertifiedTickets(nextCount);
+    
+    // Check level up threshold
+    if (nextCount === 5) {
+      showToast('🎉 축하합니다! 티켓 5회 인증 달성으로 [골드 등급]으로 승격되었습니다! ✨');
+    } else if (nextCount === 10) {
+      showToast('👑 축하합니다! 티켓 10회 인증 달성으로 최고 권위의 [플래티넘 등급]으로 승격되었습니다! 💖');
+    } else {
+      showToast(`🎟️ 티켓 인증이 완료되었습니다! (현재 인증 수: ${nextCount}개)`);
+    }
+  };
+
+  const handleContributeActivity = () => {
+    const nextPoints = activityPoints + 40;
+    setActivityPoints(nextPoints);
+
+    if (activityPoints < 200 && nextPoints >= 200) {
+      showToast('🎉 축하합니다! 활동 점수 200점 달성으로 [골드 등급]으로 승격되었습니다! ✨');
+    } else if (activityPoints < 400 && nextPoints >= 400) {
+      showToast('👑 축하합니다! 활동 점수 400점 달성으로 최고 권위의 [플래티넘 등급]으로 승격되었습니다! 💖');
+    } else {
+      showToast(`💬 커뮤니티 기여 활동 완료! +40점 획득 (현재 점수: ${nextPoints}점)`);
+    }
+  };
+
+  const handleResetLevel = () => {
+    setCertifiedTickets(2);
+    setActivityPoints(80);
+    showToast('🌱 등급 가상 시뮬레이션 데이터가 초기화되었습니다.');
+  };
+
+  // Get dynamic tier mapping
+  const getDynamicTier = () => {
+    if (certifiedTickets >= 10 || activityPoints >= 400 || profile?.tier === 'Legend Tier') {
+      return {
+        id: 'platinum',
+        name: '플래티넘 (Platinum)',
+        badgeClass: 'bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 text-slate-950 border-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.45)]',
+        accentColor: 'text-amber-400',
+        barColor: 'bg-gradient-to-r from-amber-400 to-yellow-500',
+        bgGlow: 'bg-amber-500/5 border-amber-500/20 shadow-[0_0_30px_rgba(245,158,11,0.12)]',
+        emoji: '👑',
+        pointsNeeded: 0,
+        nextTier: null,
+        desc: '최고 등급: 모든 프리미엄 권한과 현물 혜택이 상시 개방됩니다.'
+      };
+    }
+    if (certifiedTickets >= 5 || activityPoints >= 200 || profile?.tier === 'Gold') {
+      return {
+        id: 'gold',
+        name: '골드 (Gold)',
+        badgeClass: 'bg-gradient-to-r from-slate-200 via-slate-100 to-slate-300 text-slate-950 border-white shadow-[0_0_20px_rgba(226,232,240,0.35)]',
+        accentColor: 'text-slate-300',
+        barColor: 'bg-gradient-to-r from-slate-400 to-slate-200',
+        bgGlow: 'bg-slate-500/5 border-slate-500/20 shadow-[0_0_30px_rgba(226,232,240,0.08)]',
+        emoji: '🪙',
+        pointsNeeded: 10 - certifiedTickets,
+        pointsScoreNeeded: 400 - activityPoints,
+        nextTier: '플래티넘',
+        desc: '우수 등급: 선예매권 발급 및 비즈니스 추천 영업 권한이 활성화됩니다.'
+      };
+    }
+    return {
+      id: 'silver',
+      name: '실버 (Silver)',
+      badgeClass: 'bg-gradient-to-r from-blue-500/15 to-cyan-500/15 text-cyan-300 border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.25)]',
+      accentColor: 'text-cyan-400',
+      barColor: 'bg-gradient-to-r from-blue-500 to-cyan-400',
+      bgGlow: 'bg-blue-500/5 border-blue-500/20 shadow-[0_0_30px_rgba(6,182,212,0.1)]',
+      emoji: '🥈',
+      pointsNeeded: 5 - certifiedTickets,
+      pointsScoreNeeded: 200 - activityPoints,
+      nextTier: '골드',
+      desc: '기본 등급: 마이 멤버십 디지털 팬 패스 발급 및 기본 리베이트 혜택이 적용됩니다.'
+    };
+  };
+
+  const currentTierInfo = getDynamicTier();
+
   const handleCopyLink = () => {
     if (!user || !user.email) return;
     const link = `https://fandomaurora.com/signup?ref=${encodeURIComponent(user.email)}`;
@@ -302,6 +417,282 @@ export default function MyPage() {
               <div className="text-[10px] text-slate-400 font-medium truncate max-w-[180px]">{user?.email}</div>
             </div>
           </div>
+        </div>
+
+        {/* Dynamic Toast Alerts */}
+        <AnimatePresence>
+          {toastMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-[#060b18]/95 border border-cyan-500/50 px-6 py-4 rounded-2xl shadow-[0_0_25px_rgba(34,211,238,0.35)] flex items-center gap-3 max-w-md backdrop-blur-md"
+            >
+              <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
+                <Sparkles className="w-4.5 h-4.5 animate-spin" style={{ animationDuration: '4s' }} />
+              </div>
+              <p className="text-xs md:text-sm font-extrabold text-slate-100 leading-relaxed text-left">
+                {toastMessage}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Fandom Membership Tier & Level Guide Section */}
+        <div className="bg-[#050914]/80 rounded-[2.5rem] border border-blue-500/25 p-6 md:p-8 shadow-[0_0_30px_rgba(59,130,246,0.12)] space-y-8" id="fandom-membership-tier-panel">
+          
+          {/* Section Subtitle & Glow Headers */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-900 pb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center text-slate-950 font-black shadow-lg shadow-cyan-500/10">
+                <Gem className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg md:text-xl font-black text-white flex items-center gap-2">
+                  오로라 팬덤 멤버십 등급 & 혜택 센터
+                  <span className="text-[9px] font-black bg-blue-500/15 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-full uppercase font-mono tracking-wider">Interactive Live</span>
+                </h2>
+                <p className="text-[11px] text-slate-400 font-bold mt-0.5">활동 수준 및 공연 티켓 인증 횟수에 따라 등급과 혜택이 실시간으로 활성화됩니다.</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleResetLevel}
+                className="px-3.5 py-1.5 bg-slate-900/60 hover:bg-slate-900 border border-slate-850 hover:border-slate-800 text-[10px] text-slate-400 hover:text-white rounded-lg font-bold transition-all flex items-center gap-1.5"
+                title="시뮬레이션 초기화"
+              >
+                🔄 가상데이터 초기화
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            
+            {/* 1. Left Column: My Current Active Tier & Interactive Level-up buttons */}
+            <div className="lg:col-span-5 bg-slate-950/70 rounded-3xl p-6 border border-slate-800 flex flex-col justify-between space-y-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 rounded-full blur-2xl pointer-events-none" />
+              
+              <div className="space-y-5">
+                <div className="text-[9px] font-black tracking-widest text-slate-500 uppercase font-mono">My Active Member Badge</div>
+                
+                {/* Visual Badge Display */}
+                <div className="flex items-center gap-4.5 bg-[#02050c]/80 p-5 rounded-2xl border border-slate-900 shadow-inner">
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl shrink-0 border-2 ${currentTierInfo.badgeClass}`}>
+                    {currentTierInfo.emoji}
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-slate-500 font-black uppercase">현재 멤버십 등급</span>
+                    <h3 className={`text-xl font-black tracking-tight ${currentTierInfo.accentColor}`}>{currentTierInfo.name}</h3>
+                    <p className="text-[10px] text-slate-400 font-semibold">{currentTierInfo.desc}</p>
+                  </div>
+                </div>
+
+                {/* Simulated Stats Metrics */}
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <div className="bg-[#02050c]/60 p-3.5 rounded-xl border border-slate-900/80 text-center">
+                    <div className="text-[9px] text-slate-500 font-black">🎟️ 인증된 공연 티켓</div>
+                    <div className="text-xl font-black text-cyan-400 mt-1">{certifiedTickets} <span className="text-xs text-slate-400 font-bold">장</span></div>
+                  </div>
+                  <div className="bg-[#02050c]/60 p-3.5 rounded-xl border border-slate-900/80 text-center">
+                    <div className="text-[9px] text-slate-500 font-black">💬 커뮤니티 활동 점수</div>
+                    <div className="text-xl font-black text-purple-400 mt-1">{activityPoints} <span className="text-xs text-slate-400 font-bold">점</span></div>
+                  </div>
+                </div>
+
+                {/* Dynamic Level-up Progress bar */}
+                <div className="space-y-2 pt-2 bg-[#02050c]/30 p-4 rounded-xl border border-slate-900/60">
+                  <div className="flex justify-between items-center text-[11px] font-bold">
+                    <span className="text-slate-400">다음 등급 달성도</span>
+                    {currentTierInfo.nextTier ? (
+                      <span className="text-cyan-400">
+                        {currentTierInfo.pointsNeeded > 0 ? `티켓 ${currentTierInfo.pointsNeeded}장` : ''} 
+                        {currentTierInfo.pointsNeeded > 0 && currentTierInfo.pointsScoreNeeded > 0 ? ' 또는 ' : ''}
+                        {currentTierInfo.pointsScoreNeeded > 0 ? `활동 ${currentTierInfo.pointsScoreNeeded}점` : ''} 후 [{currentTierInfo.nextTier}]
+                      </span>
+                    ) : (
+                      <span className="text-amber-400 font-black flex items-center gap-1">👑 최고 레벨 도달 완료!</span>
+                    )}
+                  </div>
+
+                  {/* HTML level bar */}
+                  <div className="relative w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                    <div 
+                      className={`h-full rounded-full transition-all duration-700 ease-out ${currentTierInfo.barColor}`}
+                      style={{ 
+                        width: !currentTierInfo.nextTier 
+                          ? '100%' 
+                          : `${Math.min(100, (currentTierInfo.id === 'silver' 
+                              ? (certifiedTickets / 5) * 100 
+                              : ((certifiedTickets - 5) / 5) * 100))}%` 
+                      }}
+                    />
+                  </div>
+                  
+                  <p className="text-[9px] text-slate-500 leading-normal font-medium text-left">
+                    ※ 티켓 5장(활동 200점) 달성 시 <strong>골드</strong>, 티켓 10장(활동 400점) 달성 시 <strong>플래티넘</strong>으로 자동 등급 변경됩니다.
+                  </p>
+                </div>
+              </div>
+
+              {/* Simulation Interaction Zone */}
+              <div className="pt-4 border-t border-slate-900 space-y-2.5">
+                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest text-left">Fandom Activity Simulator</div>
+                <div className="flex gap-2.5">
+                  <button
+                    onClick={handleCertifyTicket}
+                    className="flex-1 py-3 bg-cyan-500/10 hover:bg-cyan-500/15 border border-cyan-500/20 hover:border-cyan-500/45 text-cyan-300 rounded-xl text-[11px] font-black shadow-sm transition-all active:scale-[0.98]"
+                  >
+                    티켓 추가 인증 🎟️
+                  </button>
+                  <button
+                    onClick={handleContributeActivity}
+                    className="flex-1 py-3 bg-purple-500/10 hover:bg-purple-500/15 border border-purple-500/20 hover:border-purple-500/45 text-purple-300 rounded-xl text-[11px] font-black shadow-sm transition-all active:scale-[0.98]"
+                  >
+                    활동 기여하기 💬
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            {/* 2. Right Column: Tier Benefits Comparison List */}
+            <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
+              <div className="text-[9px] font-black tracking-widest text-slate-500 uppercase font-mono">Fandom Tier Benefits Roadmap</div>
+              
+              {/* Silver, Gold, Platinum Card Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full items-stretch">
+                
+                {/* Silver Card */}
+                <div className={`rounded-2xl p-5 border flex flex-col justify-between transition-all duration-300 ${
+                  currentTierInfo.id === 'silver' 
+                    ? 'bg-[#060e22] border-cyan-400/40 shadow-[0_0_15px_rgba(6,182,212,0.15)] scale-[1.01]' 
+                    : 'bg-slate-950/40 border-slate-900 opacity-65 hover:opacity-100'
+                }`}>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] font-black px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded">🥈 실버 등급</span>
+                      {currentTierInfo.id === 'silver' && (
+                        <span className="text-[9px] font-black text-cyan-400 animate-pulse flex items-center gap-0.5">● 활성</span>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2.5 text-left">
+                      <p className="text-[10px] text-slate-400 font-semibold leading-relaxed">팬덤에 갓 입문한 회원님들을 위한 기초 우대 패키지</p>
+                      
+                      <ul className="space-y-1.5 text-[11px] font-bold text-slate-300">
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                          <span>기본 커뮤니티 입장 & 인증</span>
+                        </li>
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                          <span>디지털 팬 패스 상시 발급</span>
+                        </li>
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                          <span>예매 수수료 10% 포인트 적립</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-3 border-t border-slate-900 mt-4 text-[10px] text-slate-500 text-left font-bold">
+                    달성 기준: 기본 가입 완료
+                  </div>
+                </div>
+
+                {/* Gold Card */}
+                <div className={`rounded-2xl p-5 border flex flex-col justify-between transition-all duration-300 ${
+                  currentTierInfo.id === 'gold' 
+                    ? 'bg-[#151c2e] border-slate-300 shadow-[0_0_20px_rgba(255,255,255,0.15)] scale-[1.01]' 
+                    : 'bg-slate-950/40 border-slate-900 opacity-65 hover:opacity-100'
+                }`}>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] font-black px-2 py-0.5 bg-slate-100 text-slate-950 rounded">🪙 골드 등급</span>
+                      {currentTierInfo.id === 'gold' && (
+                        <span className="text-[9px] font-black text-slate-300 animate-pulse flex items-center gap-0.5">● 활성</span>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2.5 text-left">
+                      <p className="text-[10px] text-slate-400 font-semibold leading-relaxed">팬덤 활동을 적극 입증한 핵심 서포터 우대 패키지</p>
+                      
+                      <ul className="space-y-1.5 text-[11px] font-bold text-slate-200">
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                          <span className="text-white">단독 콘서트 최우선 선예매권</span>
+                        </li>
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                          <span>최애 팬 연동 무제한 자유수정</span>
+                        </li>
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                          <span>추천 영업 하위 링크 활성화</span>
+                        </li>
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                          <span>한정 굿즈 패키지 선구매권</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-3 border-t border-slate-900 mt-4 text-[10px] text-slate-400 text-left font-bold">
+                    달성 기준: 티켓 5회 또는 활동 200점
+                  </div>
+                </div>
+
+                {/* Platinum Card */}
+                <div className={`rounded-2xl p-5 border flex flex-col justify-between transition-all duration-300 ${
+                  currentTierInfo.id === 'platinum' 
+                    ? 'bg-[#1e170a] border-amber-400/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-[1.01]' 
+                    : 'bg-slate-950/40 border-slate-900 opacity-65 hover:opacity-100'
+                }`}>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] font-black px-2 py-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 text-black rounded font-black">👑 플래티넘</span>
+                      {currentTierInfo.id === 'platinum' && (
+                        <span className="text-[9px] font-black text-amber-400 animate-pulse flex items-center gap-0.5">● 활성</span>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2.5 text-left">
+                      <p className="text-[10px] text-amber-500/80 font-semibold leading-relaxed">최고의 기여를 다한 수석 레전드 최상위 VIP 패키지</p>
+                      
+                      <ul className="space-y-1.5 text-[11px] font-bold text-amber-100">
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                          <span className="text-amber-300 font-extrabold">전국 투어 VIP 프리패스 (연2회)</span>
+                        </li>
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                          <span>실물 순금 각인 소장용 기념 주화</span>
+                        </li>
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                          <span>미공개 고화질 포토 카드 배송</span>
+                        </li>
+                        <li className="flex items-start gap-1">
+                          <Check className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                          <span>영업 커미션 최고 60% 단계 보장</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-3 border-t border-slate-900 mt-4 text-[10px] text-amber-400 text-left font-black">
+                    달성 기준: 티켓 10회 또는 활동 400점
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
         </div>
 
         {/* User Information & Fan Display grid */}
