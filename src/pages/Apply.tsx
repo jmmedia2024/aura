@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useFirebase } from '../lib/FirebaseContext';
-import { db } from '../lib/firebase';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { supabase } from '../lib/supabase';
 import { 
   Sparkles, 
   Check, 
@@ -62,13 +61,17 @@ export default function Apply() {
     setErrorMessage('');
 
     try {
-      const userRef = doc(db, 'users', user.uid);
-      await setDoc(userRef, {
-        selectedFanId: fanId,
-        selectedFanName: name,
-        selectedFanPhotoUrl: imageUrl,
-        selectedFanUpdatedAt: serverTimestamp()
-      }, { merge: true });
+      const { error } = await supabase
+        .from('users')
+        .update({
+          selectedFanId: fanId,
+          selectedFanName: name,
+          selectedFanPhotoUrl: imageUrl,
+          selectedFanUpdatedAt: new Date().toISOString()
+        })
+        .eq('userId', user.uid);
+
+      if (error) throw error;
 
       // Simulate subtle feedback duration
       await new Promise(resolve => setTimeout(resolve, 800));

@@ -3,8 +3,8 @@ import { Mail, Lock, User, UserPlus, Loader2, Users, Sparkles } from 'lucide-rea
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp, collection, query, where, getDocs } from 'firebase/firestore';
-import { auth, db } from '../lib/firebase';
+import { auth } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -30,11 +30,13 @@ export default function Signup() {
 
       if (recruiterEmailClean) {
         try {
-          const q = query(collection(db, 'users'), where('email', '==', recruiterEmailClean));
-          const querySnapshot = await getDocs(q);
-          if (!querySnapshot.empty) {
-            const recruiterDoc = querySnapshot.docs[0];
-            const recruiterData = recruiterDoc.data();
+          const { data: recruiterData, error: recruiterError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', recruiterEmailClean)
+            .single();
+
+          if (!recruiterError && recruiterData) {
             ancestors = [recruiterEmailClean, ...(recruiterData.ancestors || [])];
           } else {
             ancestors = [recruiterEmailClean];
@@ -45,17 +47,21 @@ export default function Signup() {
         }
       }
 
-      await setDoc(doc(db, 'users', user.uid), {
-        userId: user.uid,
-        email: email,
-        displayName: displayName,
-        tier: signUpRole === 'Sales' ? 'Gold' : 'Basic',
-        role: signUpRole,
-        referredByEmail: recruiterEmailClean,
-        ancestors: ancestors,
-        phoneNumber: '',
-        createdAt: serverTimestamp(),
-      });
+      const { error: supabaseError } = await supabase
+        .from('users')
+        .insert([{
+          userId: user.uid,
+          email: email,
+          displayName: displayName,
+          tier: signUpRole === 'Sales' ? 'Gold' : 'Basic',
+          role: signUpRole,
+          referredByEmail: recruiterEmailClean,
+          ancestors: ancestors,
+          phoneNumber: '',
+          createdAt: new Date().toISOString(),
+        }]);
+
+      if (supabaseError) throw supabaseError;
 
       navigate('/');
     } catch (err: any) {
@@ -80,10 +86,13 @@ export default function Signup() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      const docRef = doc(db, 'users', user.uid);
-      const docSnap = await getDoc(docRef);
+      const { data: existingUser, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('userId', user.uid)
+        .single();
 
-      if (!docSnap.exists()) {
+      if (!existingUser) {
         const isDefaultAdmin = user.email === 'new2020.jeonil@gmail.com';
         
         let ancestors: string[] = [];
@@ -91,11 +100,13 @@ export default function Signup() {
 
         if (recruiterEmailClean) {
           try {
-            const q = query(collection(db, 'users'), where('email', '==', recruiterEmailClean));
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-              const recruiterDoc = querySnapshot.docs[0];
-              const recruiterData = recruiterDoc.data();
+            const { data: recruiterData, error: recruiterError } = await supabase
+              .from('users')
+              .select('*')
+              .eq('email', recruiterEmailClean)
+              .single();
+
+            if (!recruiterError && recruiterData) {
               ancestors = [recruiterEmailClean, ...(recruiterData.ancestors || [])];
             } else {
               ancestors = [recruiterEmailClean];
@@ -106,26 +117,31 @@ export default function Signup() {
           }
         }
 
-        await setDoc(docRef, {
-          userId: user.uid,
-          email: user.email || '',
-          displayName: user.displayName || displayName || '유저',
-          tier: isDefaultAdmin ? 'Legend Tier' : (signUpRole === 'Sales' ? 'Gold' : 'Basic'),
-          role: isDefaultAdmin ? 'Admin' : signUpRole,
-          referredByEmail: recruiterEmailClean,
-          ancestors: ancestors,
-          phoneNumber: '',
-          createdAt: serverTimestamp(),
-        });
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert([{
+            userId: user.uid,
+            email: user.email || '',
+            displayName: user.displayName || displayName || '유저',
+            tier: isDefaultAdmin ? 'Legend Tier' : (signUpRole === 'Sales' ? 'Gold' : 'Basic'),
+            role: isDefaultAdmin ? 'Admin' : signUpRole,
+            referredByEmail: recruiterEmailClean,
+            ancestors: ancestors,
+            phoneNumber: '',
+            createdAt: new Date().toISOString(),
+          }]);
+        
+        if (insertError) throw insertError;
       } else {
         if (user.email === 'new2020.jeonil@gmail.com') {
-          const currentData = docSnap.data();
-          if (currentData.role !== 'Admin' || currentData.tier !== 'Legend Tier') {
-            await setDoc(docRef, {
-              ...currentData,
-              role: 'Admin',
-              tier: 'Legend Tier',
-            }, { merge: true });
+          if (existingUser.role !== 'Admin' || existingUser.tier !== 'Legend Tier') {
+            await supabase
+              .from('users')
+              .update({
+                role: 'Admin',
+                tier: 'Legend Tier',
+              })
+              .eq('userId', user.uid);
           }
         }
       }

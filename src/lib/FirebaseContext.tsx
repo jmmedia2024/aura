@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth, db } from './firebase';
-import { doc, getDoc, setDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
+import { auth } from './firebase';
+import { supabase } from './supabase';
 
 interface FirebaseContextType {
   user: User | null;
@@ -23,21 +23,30 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let unsubscribeProfile: (() => void) | null = null;
+    let profileSubscription: any = null;
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      if (unsubscribeProfile) {
-        unsubscribeProfile();
-        unsubscribeProfile = null;
+      
+      if (profileSubscription) {
+        profileSubscription.unsubscribe();
+        profileSubscription = null;
       }
 
       if (currentUser) {
         try {
-          const userDocRef = doc(db, 'users', currentUser.uid);
-          const userDocGet = await getDoc(userDocRef);
-          
-          if (!userDocGet.exists() && currentUser.email === 'new2020.jeonil@gmail.com') {
+          // Fetch initial profile from Supabase
+          const { data: initialProfile, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('user_id', currentUser.uid)
+            .single();
+
+          if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+            console.error("Error fetching Supabase profile:", error);
+          }
+
+          if (!initialProfile && currentUser.email === 'new2020.jeonil@gmail.com') {
             const adminProfile = {
               userId: currentUser.uid,
               email: currentUser.email,
@@ -47,35 +56,51 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               referredByEmail: '',
               ancestors: [],
               phoneNumber: '',
-              createdAt: serverTimestamp()
+              createdAt: new Date().toISOString()
             };
-            try {
-              await setDoc(userDocRef, adminProfile);
-            } catch (writeErr) {
-              console.error("Failed to write auto-created admin profile to Firestore:", writeErr);
+            
+            const { error: insertError } = await supabase
+              .from('users')
+              .insert([adminProfile]);
+            
+            if (insertError) {
+              console.error("Failed to auto-create admin profile in Supabase:", insertError);
+            } else {
+              setProfile(adminProfile);
             }
+          } else if (initialProfile) {
+            setProfile(initialProfile);
+          } else {
+            // Fallback for newly authenticated user without a profile record yet
+            setProfile({
+              userId: currentUser.uid,
+              email: currentUser.email,
+              displayName: currentUser.displayName || currentUser.email?.split('@')[0] || '유저',
+              tier: 'Basic',
+              role: 'User',
+              createdAt: new Date().toISOString()
+            });
           }
 
-          // Real-time listener for the user profile document
-          unsubscribeProfile = onSnapshot(userDocRef, (snap) => {
-            if (snap.exists()) {
-              setProfile(snap.data());
-            } else {
-              // Fallback if document doesn't exist yet but user is authenticated
-              setProfile({
-                userId: currentUser.uid,
-                email: currentUser.email,
-                displayName: currentUser.displayName || currentUser.email?.split('@')[0] || '유저',
-                tier: 'Basic',
-                role: 'User',
-                createdAt: new Date()
-              });
-            }
-          }, (err) => {
-            console.error("onSnapshot error on user profile:", err);
-          });
-        } catch (error) {
-          console.error("Error fetching user profile initial doc:", error);
+          // Subscribe to real-time changes
+          profileSubscription = supabase
+            .channel(`public:users:userId=eq.${currentUser.uid}`)
+            .on(
+              'postgres_changes',
+              {
+                event: '*',
+                schema: 'public',
+                table: 'users',
+                filter: `userId=eq.${currentUser.uid}`,
+              },
+              (payload) => {
+                setProfile(payload.new);
+              }
+            )
+            .subscribe();
+
+        } catch (err) {
+          console.error("Supabase profile setup error:", err);
         }
       } else {
         setProfile(null);
@@ -85,8 +110,8 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     return () => {
       unsubscribeAuth();
-      if (unsubscribeProfile) {
-        unsubscribeProfile();
+      if (profileSubscription) {
+        profileSubscription.unsubscribe();
       }
     };
   }, []);

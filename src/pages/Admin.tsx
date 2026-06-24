@@ -4,8 +4,7 @@ import { Save, Loader2, Plus, Trash2, ArrowLeft, Users, Edit2, X, ShieldAlert, B
 import { Link, useNavigate } from 'react-router-dom';
 import { useFirebase } from '../lib/FirebaseContext';
 import { getSettings, saveSettings } from '../lib/settings';
-import { collection, getDocs, doc, setDoc, deleteDoc, query, where, serverTimestamp } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
 
 export default function Admin() {
   const { user, profile, loading } = useFirebase();
@@ -61,14 +60,14 @@ export default function Admin() {
   const fetchUsers = async () => {
     setLoadingUsers(true);
     try {
-      const snapshot = await getDocs(collection(db, 'users'));
-      const list: any[] = [];
-      snapshot.forEach((doc) => {
-        list.push(doc.data());
-      });
-      setUsersList(list);
+      const { data, error } = await supabase
+        .from('users')
+        .select('*');
+      
+      if (error) throw error;
+      setUsersList(data || []);
     } catch (err) {
-      console.error("Error fetching users:", err);
+      console.error("Error fetching users from Supabase:", err);
     } finally {
       setLoadingUsers(false);
     }
@@ -77,20 +76,15 @@ export default function Admin() {
   const fetchApplications = async () => {
     setLoadingApps(true);
     try {
-      const snapshot = await getDocs(collection(db, 'cardApplications'));
-      const list: any[] = [];
-      snapshot.forEach((doc) => {
-        list.push({ id: doc.id, ...doc.data() });
-      });
-      // Sort by status or date
-      list.sort((a, b) => {
-        const valA = a.createdAt?.seconds || 0;
-        const valB = b.createdAt?.seconds || 0;
-        return valB - valA;
-      });
-      setApplicationsList(list);
+      const { data, error } = await supabase
+        .from('cardApplications')
+        .select('*')
+        .order('createdAt', { ascending: false });
+
+      if (error) throw error;
+      setApplicationsList(data || []);
     } catch (err) {
-      console.error("Error fetching card applications:", err);
+      console.error("Error fetching card applications from Supabase:", err);
     } finally {
       setLoadingApps(false);
     }
@@ -100,20 +94,15 @@ export default function Admin() {
     const appToUpdate = applicationsList.find(a => a.id === appId);
     if (!appToUpdate) return;
     try {
-      const payload = {
-        userId: appToUpdate.userId,
-        email: appToUpdate.email,
-        displayName: appToUpdate.displayName || '',
-        cardName: appToUpdate.cardName || '',
-        address: appToUpdate.address || '',
-        detailAddress: appToUpdate.detailAddress || '',
-        phoneNumber: appToUpdate.phoneNumber || '',
-        cardColor: appToUpdate.cardColor || 'rose',
-        status: newStatus,
-        createdAt: appToUpdate.createdAt,
-        updatedAt: serverTimestamp()
-      };
-      await setDoc(doc(db, 'cardApplications', appId), payload);
+      const { error } = await supabase
+        .from('cardApplications')
+        .update({
+          status: newStatus,
+          updatedAt: new Date().toISOString()
+        })
+        .eq('id', appId);
+
+      if (error) throw error;
       alert(`신청 상태가 성공적으로 변경되었습니다.`);
       fetchApplications();
     } catch (err) {
@@ -125,11 +114,13 @@ export default function Admin() {
   const fetchDesigns = async () => {
     setLoadingDesigns(true);
     try {
-      const snapshot = await getDocs(collection(db, 'cardDesigns'));
-      const list: any[] = [];
-      snapshot.forEach((docSnap) => {
-        list.push({ ...docSnap.data() });
-      });
+      const { data, error } = await supabase
+        .from('cardDesigns')
+        .select('*');
+      
+      if (error) throw error;
+      let list = data || [];
+      
       // If empty, dynamically initialize default templates to begin with
       if (list.length === 0) {
         const defaults = [
@@ -166,12 +157,9 @@ export default function Admin() {
             createdAt: new Date().toISOString()
           }
         ];
-        for (const item of defaults) {
-          await setDoc(doc(db, 'cardDesigns', item.id), item);
-          list.push(item);
-        }
+        await supabase.from('cardDesigns').insert(defaults);
+        list = defaults;
       }
-      // Sort
       setDesignsList(list);
     } catch (err) {
       console.error("Error fetching card designs:", err);
@@ -203,7 +191,11 @@ export default function Admin() {
         accentColor: designForm.accentColor || 'Gold',
         createdAt: new Date().toISOString()
       };
-      await setDoc(doc(db, 'cardDesigns', payload.id), payload);
+      const { error } = await supabase
+        .from('cardDesigns')
+        .upsert(payload);
+
+      if (error) throw error;
       alert('세련된 카드 디자인이 성공적으로 보존되었습니다!');
       setDesignForm({ id: '', name: '', imageUrl: '', textColor: '#ffffff', accentColor: 'Gold' });
       setEditingDesign(null);
@@ -219,7 +211,12 @@ export default function Admin() {
   const handleDeleteDesign = async (id: string) => {
     if (!confirm('정말로 이 카드 디자인 템플릿을 제거하시겠습니까?')) return;
     try {
-      await deleteDoc(doc(db, 'cardDesigns', id));
+      const { error } = await supabase
+        .from('cardDesigns')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
       alert('디자인 템플릿이 삭제되었습니다.');
       fetchDesigns();
     } catch (err) {
@@ -258,10 +255,13 @@ export default function Admin() {
   const cascadeAncestorsUpdate = async (parentEmail: string, parentAncestors: string[], allUsers: any[]) => {
     const directChildren = allUsers.filter(u => u.referredByEmail === parentEmail);
     for (const child of directChildren) {
-      const childDocRef = doc(db, 'users', child.userId);
       const childAncestors = [parentEmail, ...parentAncestors];
-      // Update firebase doc
-      await setDoc(childDocRef, { ...child, ancestors: childAncestors });
+      
+      await supabase
+        .from('users')
+        .update({ ancestors: childAncestors })
+        .eq('userId', child.userId);
+
       // Recurse children recursively to maintain tree integrity
       await cascadeAncestorsUpdate(child.email, childAncestors, allUsers);
     }
@@ -278,10 +278,13 @@ export default function Admin() {
 
       if (refEmailClean) {
         // Find recruiter to fetch their ancestry line
-        const q = query(collection(db, 'users'), where('email', '==', refEmailClean));
-        const qSnapshot = await getDocs(q);
-        if (!qSnapshot.empty) {
-          const recruiterData = qSnapshot.docs[0].data();
+        const { data: recruiterData, error: recError } = await supabase
+          .from('users')
+          .select('ancestors')
+          .eq('email', refEmailClean)
+          .single();
+
+        if (recruiterData) {
           ancestors = [refEmailClean, ...(recruiterData.ancestors || [])];
         } else {
           ancestors = [refEmailClean];
@@ -298,16 +301,29 @@ export default function Admin() {
         ancestors: ancestors,
       };
 
-      // Save user to firebase
-      await setDoc(doc(db, 'users', editingUser.userId), updatedUser);
+      // Save user to Supabase
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          displayName: editName,
+          phoneNumber: editPhone,
+          tier: editTier,
+          role: editRole,
+          referredByEmail: refEmailClean,
+          ancestors: ancestors,
+        })
+        .eq('userId', editingUser.userId);
+
+      if (updateError) throw updateError;
 
       // Recursive cascade trigger to update children of this updated user
-      const fullSnapshot = await getDocs(collection(db, 'users'));
-      const allUsers: any[] = [];
-      fullSnapshot.forEach((doc) => {
-        allUsers.push(doc.data());
-      });
-      await cascadeAncestorsUpdate(editingUser.email, ancestors, allUsers);
+      const { data: allUsers, error: usersError } = await supabase
+        .from('users')
+        .select('*');
+
+      if (allUsers) {
+        await cascadeAncestorsUpdate(editingUser.email, ancestors, allUsers);
+      }
 
       alert('회원 정보 및 하위 추천 정보가 동기화 저장되었습니다.');
       setEditingUser(null);

@@ -1,5 +1,4 @@
-import { db } from './firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { supabase } from './supabase';
 import { Star, Music, Ship, Sparkles, Coins, CreditCard } from 'lucide-react';
 
 export const ICON_MAP: Record<string, any> = {
@@ -86,18 +85,29 @@ export const DEFAULT_SETTINGS = {
 
 export async function getSettings() {
   try {
-    const docRef = doc(db, 'settings', 'landing');
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return docSnap.data();
+    const { data, error } = await supabase
+      .from('settings')
+      .select('data')
+      .eq('id', 'landing')
+      .single();
+
+    if (error) {
+      if (error.code !== 'PGRST116') {
+        console.error("Error fetching settings from Supabase:", error);
+      }
+      return DEFAULT_SETTINGS;
     }
+    return data.data;
   } catch (error) {
     console.error("Error fetching settings:", error);
+    return DEFAULT_SETTINGS;
   }
-  return DEFAULT_SETTINGS;
 }
 
 export async function saveSettings(settings: any) {
-  const docRef = doc(db, 'settings', 'landing');
-  await setDoc(docRef, settings);
+  const { error } = await supabase
+    .from('settings')
+    .upsert({ id: 'landing', data: settings });
+  
+  if (error) throw error;
 }

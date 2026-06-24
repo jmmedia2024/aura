@@ -3,8 +3,8 @@ import { Mail, Lock, LogIn, Loader2, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db } from '../lib/firebase';
+import { auth } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -41,31 +41,37 @@ export default function Login() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      const docRef = doc(db, 'users', user.uid);
-      const docSnap = await getDoc(docRef);
+      const { data: existingUser, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('userId', user.uid)
+        .single();
 
-      if (!docSnap.exists()) {
+      if (!existingUser) {
         const isDefaultAdmin = user.email === 'new2020.jeonil@gmail.com';
-        await setDoc(docRef, {
-          userId: user.uid,
-          email: user.email || '',
-          displayName: user.displayName || '사용자',
-          tier: isDefaultAdmin ? 'Legend Tier' : 'Basic',
-          role: isDefaultAdmin ? 'Admin' : 'User',
-          referredByEmail: '',
-          ancestors: [],
-          phoneNumber: '',
-          createdAt: serverTimestamp(),
-        });
+        await supabase
+          .from('users')
+          .insert([{
+            userId: user.uid,
+            email: user.email || '',
+            displayName: user.displayName || '사용자',
+            tier: isDefaultAdmin ? 'Legend Tier' : 'Basic',
+            role: isDefaultAdmin ? 'Admin' : 'User',
+            referredByEmail: '',
+            ancestors: [],
+            phoneNumber: '',
+            createdAt: new Date().toISOString(),
+          }]);
       } else {
         if (user.email === 'new2020.jeonil@gmail.com') {
-          const currentData = docSnap.data();
-          if (currentData.role !== 'Admin' || currentData.tier !== 'Legend Tier') {
-            await setDoc(docRef, {
-              ...currentData,
-              role: 'Admin',
-              tier: 'Legend Tier',
-            }, { merge: true });
+          if (existingUser.role !== 'Admin' || existingUser.tier !== 'Legend Tier') {
+            await supabase
+              .from('users')
+              .update({
+                role: 'Admin',
+                tier: 'Legend Tier',
+              })
+              .eq('userId', user.uid);
           }
         }
       }

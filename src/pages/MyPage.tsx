@@ -23,8 +23,7 @@ import {
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFirebase } from '../lib/FirebaseContext';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
 
 interface UserProfile {
   userId: string;
@@ -222,18 +221,15 @@ export default function MyPage() {
       const fetchDownline = async () => {
         try {
           setFetching(true);
-          const q = query(
-            collection(db, 'users'), 
-            where('ancestors', 'array-contains', user.email)
-          );
-          const snapshot = await getDocs(q);
-          const usersList: UserProfile[] = [];
-          snapshot.forEach((doc) => {
-            usersList.push(doc.data() as UserProfile);
-          });
-          setDownlineUsers(usersList);
+          const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .contains('ancestors', [user.email]);
+
+          if (error) throw error;
+          setDownlineUsers(data || []);
         } catch (err: any) {
-          console.error("Firestore error loading downline users:", err);
+          console.error("Supabase error loading downline users:", err);
           setErrorOriginal(err.message || "추천인 목록을 불러오는 중 오류가 발생했습니다.");
         } finally {
           setFetching(false);
