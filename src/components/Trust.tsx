@@ -18,7 +18,7 @@ const inclusions = [
 
 export default function Trust() {
   return (
-    <section id="trust" className="py-24 px-5 md:px-12 bg-[#030712] text-white overflow-hidden relative">
+    <section id="trust" className="py-24 px-5 md:px-12 bg-transparent text-white overflow-hidden relative">
       {/* Background ambient lighting */}
       <div className="absolute top-1/2 left-1/4 w-[350px] h-[350px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-10 right-1/4 w-[350px] h-[350px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
@@ -58,8 +58,8 @@ export default function Trust() {
                        {item.icon}
                     </div>
                     <div className="space-y-1">
-                       <h4 className="font-bold text-white text-base">{item.title}</h4>
-                       <p className="text-slate-400 text-xs md:text-sm leading-relaxed">{item.desc}</p>
+                       <h4 className="font-bold text-white text-sm md:text-base">{item.title}</h4>
+                       <p className="hidden md:block text-slate-400 text-xs md:text-sm leading-relaxed">{item.desc}</p>
                     </div>
                  </div>
                ))}
@@ -84,8 +84,8 @@ export default function Trust() {
                        {item.icon}
                     </div>
                     <div className="space-y-1">
-                       <h4 className="font-bold text-slate-300 text-base">{item.title}</h4>
-                       <p className="text-slate-400 text-xs md:text-sm leading-relaxed">{item.desc}</p>
+                       <h4 className="font-bold text-slate-300 text-sm md:text-base">{item.title}</h4>
+                       <p className="hidden md:block text-slate-400 text-xs md:text-sm leading-relaxed">{item.desc}</p>
                     </div>
                  </div>
                ))}
@@ -107,7 +107,8 @@ export default function Trust() {
             <div className="space-y-2 flex items-center gap-3 md:block">
               <AlertCircle className="w-8 h-8 text-[#D4AF37] mb-2 shrink-0 animate-pulse" />
               <h3 className="text-xl md:text-2xl font-display font-black tracking-tight text-white leading-tight">
-                예약 안내 및<br className="hidden md:inline" /> 취소 규정
+                <span className="md:hidden">규정 안내</span>
+                <span className="hidden md:inline">예약 안내 및<br /> 취소 규정</span>
               </h3>
             </div>
             <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs md:text-sm font-medium text-slate-300">
@@ -139,10 +140,11 @@ export default function Trust() {
         <div className="flex justify-center pt-6">
            <motion.div 
              whileHover={{ scale: 1.05 }}
-             className="flex items-center gap-3 px-6 py-3.5 bg-slate-950 border border-emerald-500/40 text-emerald-300 rounded-full font-black text-xs md:text-sm shadow-[0_0_20px_rgba(16,185,129,0.25)] animate-pulse"
+             className="flex items-center gap-3 px-6 py-3.5 bg-slate-950 border border-emerald-500/40 text-emerald-300 rounded-full font-black text-[10px] md:text-sm shadow-[0_0_20px_rgba(16,185,129,0.25)] animate-pulse"
            >
               <ShieldCheck className="w-5 h-5 text-emerald-400" />
-              대한민국 최초 팬덤 특권 이행 리콜 보장제 실시 (불만족 시 100% 환불 보증)
+              <span className="hidden sm:inline">대한민국 최초 팬덤 특권 이행 리콜 보장제 실시 (불만족 시 100% 환불 보증)</span>
+              <span className="sm:hidden">100% 환불 리콜 보장제 실시</span>
            </motion.div>
         </div>
       </div>

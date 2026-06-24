@@ -12,73 +12,63 @@ export const ICON_MAP: Record<string, any> = {
 
 export const DEFAULT_SETTINGS = {
   hero: {
-    badge: "Shinji Official Project",
-    artist: "대한민국 댄스 레전드 그룹 코요태 신지",
-    title: "팬클럽",
-    subtitle: "카드출시",
-    tagline: "2026년 한정판 팬클럽기념 카드출시",
-    membershipFee: "₩550,000",
+    badge: "R.ef 30th Anniversary Project",
+    artist: "대한민국 1세대 댄스 레전드 R.ef (알이에프)",
+    title: "30주년 한정판",
+    subtitle: "VIP 멤버십 카드",
+    tagline: "박철우, 성대현, 이성욱과 함께하는 30년의 추억, 영원한 혜택",
+    membershipFee: "₩1,100,000",
   },
   benefits: [
     {
-      title: "속초 디너 신지 팬미팅 프리패스",
-      description: "음식과 음료, 주류가 제공되는 코요테 신지의 미니 콘서트 & 토크쇼",
-      price: "회당 일반 판매가 80,000원",
-      icon: "Star",
-      color: "from-blue-500 to-blue-600",
-      image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80",
-      date: "2026-07-15T18:00:00",
-      schedule: ["17:00 - 입장 및 웰컴 드링크", "18:00 - 셰프 특별 디너 코스 시식", "19:30 - 신지 미니 콘서트 (Part 1)", "20:30 - 팬 토크 및 Q&A 세션", "21:30 - 개별 기념 촬영 및 유대 관계의 시간"]
-    },
-    {
-      title: "코요테 썸머 콘서트 프리패스",
-      description: "시흥시 웨이브파크 대형 파도풀 콘서트 & BBQ 식사, 레이저 쇼",
-      price: "일반 판매가 150,000원",
+      title: "R.ef 30주년 잠실 실내체육관 콘서트 VIP",
+      description: "90년대 감성을 깨우는 R.ef 완전체 30주년 기념 단독 콘서트 최전방 VIP석",
+      price: "일반 판매가 250,000원 상당",
       icon: "Music",
-      color: "from-blue-400 to-cyan-400",
-      image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&q=80",
-      date: "2026-08-22T19:00:00",
-      schedule: ["16:00 - 웨이브파크 입장 및 자유 서핑", "18:00 - 풀사이드 프리미엄 BBQ 파티", "19:30 - 코요테 메인 무대 오프닝", "20:45 - 워터 레이저 판타지 쇼", "21:30 - 올나잇 팬덤 파티"]
-    },
-    {
-      title: "All-inclusive 팬크루즈 투어",
-      description: "5성급 셰프 정찬과 팬미팅 투어 화려한 쇼가 모두 포함된 1박 2일",
-      price: "일반 판매가 440,000원",
-      icon: "Ship",
-      color: "from-blue-600 to-blue-800",
-      image: "https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&q=80",
-      date: "2026-09-12T10:00:00",
-      schedule: ["Day 1 10:00 - 승선 및 스위트룸 체크인", "Day 1 13:00 - 파노라마 오션뷰 런치", "Day 1 19:00 - 스타와 함께하는 선상 갈라쇼", "Day 2 09:00 - 선상 조식 및 포토타임", "Day 2 14:00 - 하선 및 기념품 증정"]
-    },
-    {
-      title: "코요테 단독 공연 VIP석",
-      description: "코요테 공연 VIP석 제공 및 화려한 무대 이벤트",
-      price: "회원 전용 특권",
-      icon: "Sparkles",
-      color: "from-indigo-500 to-blue-500",
+      color: "from-amber-400 to-amber-600",
       image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80",
-      date: "2026-10-29T19:30:00",
-      schedule: ["18:30 - VIP 전용 라운지 이용", "19:30 - 정기 단독 공연 메인 세트", "20:45 - 앵콜 및 스페셜 이벤트", "21:15 - VIP 백스테이지 투어", "22:00 - 행사 종료"]
+      date: "2026-10-15T19:00:00",
+      schedule: ["17:30 - VIP 전용 라운지 입장", "18:30 - 아티스트 리허설 관람 (Sound Check)", "19:30 - 본 공연 (상심, 고요속의 외침 등 히트곡 메들리)", "21:30 - 팬들과의 단체 사진 촬영"]
     },
     {
-      title: "코요테 기념 주화",
-      description: "2026년 한정판 소장가치 최고의 코요테 신지 기념 금주화 증정",
-      price: "소장용 한정판",
-      icon: "Coins",
+      title: "럭셔리 팬 크루즈 '고요속의 여행'",
+      description: "R.ef 멤버들과 함께하는 2박 3일 초호화 크루즈 투어 및 선상 팬미팅",
+      price: "일반 판매가 880,000원 상당",
+      icon: "Ship",
+      color: "from-slate-700 to-slate-900",
+      image: "https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&q=80",
+      date: "2026-11-20T11:00:00",
+      schedule: ["Day 1 - 인천항 출발 및 웰컴 갈라 디너", "Day 2 - R.ef 멤버와 함께하는 토크 콘서트", "Day 3 - 기항지 관광 및 개별 포토타임 후 하선"]
+    },
+    {
+      title: "그랜드 하얏트 프리미엄 디너쇼",
+      description: "최고급 코스 요리와 함께 즐기는 R.ef의 고품격 라이브 무대",
+      price: "회원 전용 한정 초대",
+      icon: "Star",
       color: "from-[#D4AF37] to-[#B8860B]",
-      image: "https://images.unsplash.com/photo-1624365169192-37d37a85e921?auto=format&fit=crop&q=80",
-      date: "2026-06-30T00:00:00",
-      schedule: ["2026-06-01 - 한정판 디자인 공개", "2026-06-15 - 제작 공정 브이로그 업데이트", "2026-06-30 - 가입 순차적 배송 시작", "2026-07-15 - 잔여 수량 파기 및 가치 보전"]
+      image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80",
+      date: "2026-12-24T18:30:00",
+      schedule: ["18:00 - 레드카펫 포토존", "19:00 - 특급 셰프 시그니처 7코스 디너", "20:30 - R.ef 크리스마스 이브 스페셜 라이브", "21:40 - 멤버들이 직접 전달하는 크리스마스 선물"]
     },
     {
-      title: "한정판 코요테 신지 굿즈 카드",
-      description: "신지 싸인이 각인된 실생활 거래 가능 리워드 체크카드",
-      price: "가입 후 15일 이내 발송",
-      icon: "CreditCard",
-      color: "from-slate-700 to-black",
-      image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&q=80",
-      date: "2026-06-15T00:00:00",
-      schedule: ["가입 당일 - 개인 정보 확인 및 발급 승인", "가입 D+3 - 카드 제작 및 레이저 각인", "가입 D+5 - 특수 보안 배송팀 인계", "가입 D+10 - 회원 본인 수령 확인", "가입 D+15 - 전용 혜택 활성화"]
+      title: "30주년 한정판 24K 순금 카드",
+      description: "R.ef 30주년을 기념하여 제작된 소장가치 100%의 실물 골드 카드",
+      price: "가입 시 증정 (비매품)",
+      icon: "Coins",
+      color: "from-yellow-400 to-amber-500",
+      image: "https://images.unsplash.com/photo-1624365169192-37d37a85e921?auto=format&fit=crop&q=80",
+      date: "2026-09-01T00:00:00",
+      schedule: ["D+1 - 디자인 개인화 각인", "D+7 - 특수 보안 배송팀 출동", "D+14 - 전담 매니저 해피콜 및 수령 확인"]
+    },
+    {
+      title: "VIP 전담 비서 서비스 (24/7)",
+      description: "R.ef 활동 관련 모든 정보와 공연 예약을 우선 처리해드리는 전용 핫라인",
+      price: "연중 상시 제공",
+      icon: "Sparkles",
+      color: "from-slate-800 to-black",
+      image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80",
+      date: "2026-06-01T00:00:00",
+      schedule: ["- 공연 및 행사 최우선 예약 시스템", "- 굿즈 신상품 선구매 권한", "- 전용 CS 채널 1:1 상담사 배치"]
     }
   ]
 };

@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase } from './supabase';
+import { supabase } from './supabase.ts';
 
 interface AuthContextType {
   user: User | null;
   profile: any | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  getToken: () => Promise<string | null>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -14,6 +16,8 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   signOut: async () => {},
+  getToken: async () => null,
+  refreshProfile: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -23,12 +27,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const getToken = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token ?? null;
+  };
+
+  const fetchProfile = async () => {
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await fetch('/api/profile', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProfile(data);
+      }
+    } catch (err) {
+      console.error("Profile fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshProfile = async () => {
+    await fetchProfile();
+  };
+
   useEffect(() => {
     // 1. Initial Session Check
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id, session.user.email!);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        fetchProfile();
       } else {
         setLoading(false);
       }
@@ -40,7 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(currentUser);
       
       if (currentUser) {
-        fetchProfile(currentUser.id, currentUser.email!);
+        fetchProfile();
       } else {
         setProfile(null);
         setLoading(false);
@@ -52,52 +88,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const fetchProfile = async (userId: string, email: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('userId', userId)
-        .single();
-
-      if (error && error.code === 'PGRST116') {
-        // Auto-create profile if admin email
-        if (email === 'new2020.jeonil@gmail.com') {
-          const adminProfile = {
-            userId: userId,
-            email: email,
-            displayName: '전일미디어 관리자',
-            tier: 'Legend Tier',
-            role: 'Admin',
-            createdAt: new Date().toISOString()
-          };
-          const { data: newProfile, error: insertError } = await supabase
-            .from('users')
-            .insert([adminProfile])
-            .select()
-            .single();
-          
-          if (!insertError) setProfile(newProfile);
-        } else {
-          // Normal user profile fallback or placeholder
-          setProfile({ userId: userId, email, role: 'User', tier: 'Basic' });
-        }
-      } else if (data) {
-        setProfile(data);
-      }
-    } catch (err) {
-      console.error("Profile fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const signOut = async () => {
     await supabase.auth.signOut();
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signOut }}>
+    <AuthContext.Provider value={{ user, profile, loading, signOut, getToken, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

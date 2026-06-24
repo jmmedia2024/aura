@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Save, Loader2, Plus, Trash2, ArrowLeft, Users, Edit2, X, ShieldAlert, BadgeCheck, CreditCard, Check, Ban } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../lib/AuthContext';
-import { getSettings, saveSettings } from '../lib/settings';
-import { supabase } from '../lib/supabase';
+import { useAuth } from '../lib/AuthContext.tsx';
+import { getSettings, saveSettings } from '../lib/settings.ts';
 
 export default function Admin() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, getToken } = useAuth();
   const navigate = useNavigate();
   const [settings, setSettings] = useState<any>(null);
   const [saving, setSaving] = useState(false);
@@ -43,7 +42,7 @@ export default function Admin() {
   const [editReferred, setEditReferred] = useState('');
   const [savingUser, setSavingUser] = useState(false);
 
-  const isAdmin = user && user.email === 'new2020.jeonil@gmail.com';
+  const isAdmin = profile?.role === 'Admin';
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -60,14 +59,15 @@ export default function Admin() {
   const fetchUsers = async () => {
     setLoadingUsers(true);
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*');
-      
-      if (error) throw error;
+      const token = await getToken();
+      const response = await fetch('/api/admin/users', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to fetch users');
+      const data = await response.json();
       setUsersList(data || []);
     } catch (err) {
-      console.error("Error fetching users from Supabase:", err);
+      console.error("Error fetching users:", err);
     } finally {
       setLoadingUsers(false);
     }
@@ -76,33 +76,33 @@ export default function Admin() {
   const fetchApplications = async () => {
     setLoadingApps(true);
     try {
-      const { data, error } = await supabase
-        .from('cardApplications')
-        .select('*')
-        .order('createdAt', { ascending: false });
-
-      if (error) throw error;
+      const token = await getToken();
+      const response = await fetch('/api/applications', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to fetch applications');
+      const data = await response.json();
       setApplicationsList(data || []);
     } catch (err) {
-      console.error("Error fetching card applications from Supabase:", err);
+      console.error("Error fetching applications:", err);
     } finally {
       setLoadingApps(false);
     }
   };
 
   const handleUpdateAppStatus = async (appId: string, newStatus: 'approved' | 'rejected') => {
-    const appToUpdate = applicationsList.find(a => a.id === appId);
-    if (!appToUpdate) return;
     try {
-      const { error } = await supabase
-        .from('cardApplications')
-        .update({
-          status: newStatus,
-          updatedAt: new Date().toISOString()
-        })
-        .eq('id', appId);
+      const token = await getToken();
+      const response = await fetch(`/api/applications/${appId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error('Failed to update status');
       alert(`신청 상태가 성공적으로 변경되었습니다.`);
       fetchApplications();
     } catch (err) {
@@ -114,53 +114,10 @@ export default function Admin() {
   const fetchDesigns = async () => {
     setLoadingDesigns(true);
     try {
-      const { data, error } = await supabase
-        .from('cardDesigns')
-        .select('*');
-      
-      if (error) throw error;
-      let list = data || [];
-      
-      // If empty, dynamically initialize default templates to begin with
-      if (list.length === 0) {
-        const defaults = [
-          {
-            id: 'rose_marble',
-            name: '럭셔리 로즈 마블 (Rose Gold Marble)',
-            imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
-            textColor: '#5a2d2d',
-            accentColor: 'Rose Gold',
-            createdAt: new Date().toISOString()
-          },
-          {
-            id: 'obsidian_black',
-            name: '매트 블랙 카본 (Obsidian Carbon)',
-            imageUrl: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80',
-            textColor: '#fbbf24',
-            accentColor: 'Gold',
-            createdAt: new Date().toISOString()
-          },
-          {
-            id: 'cyber_holo',
-            name: '사이버 홀로그램 (Cyber Holographic)',
-            imageUrl: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=800&q=80',
-            textColor: '#0f172a',
-            accentColor: 'Silver',
-            createdAt: new Date().toISOString()
-          },
-          {
-            id: 'royal_gold',
-            name: '로열 골드 플루이드 (Royal Gold Fluid)',
-            imageUrl: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80',
-            textColor: '#ffffff',
-            accentColor: 'Gold',
-            createdAt: new Date().toISOString()
-          }
-        ];
-        await supabase.from('cardDesigns').insert(defaults);
-        list = defaults;
-      }
-      setDesignsList(list);
+      const response = await fetch('/api/designs');
+      if (!response.ok) throw new Error('Failed to fetch designs');
+      const data = await response.json();
+      setDesignsList(data || []);
     } catch (err) {
       console.error("Error fetching card designs:", err);
     } finally {
@@ -175,27 +132,26 @@ export default function Admin() {
       return;
     }
     
-    const idRegex = /^[a-zA-Z0-9_\-]+$/;
-    if (!idRegex.test(designForm.id)) {
-      alert('디자인 ID는 영문, 숫자, 밑줄(_), 하이픈(-)으로만 구성되어야 합니다.');
-      return;
-    }
-
     setSavingDesign(true);
     try {
+      const token = await getToken();
       const payload = {
         id: designForm.id.trim().toLowerCase(),
         name: designForm.name.trim(),
-        imageUrl: designForm.imageUrl.trim(),
-        textColor: designForm.textColor || '#ffffff',
-        accentColor: designForm.accentColor || 'Gold',
-        createdAt: new Date().toISOString()
+        image_url: designForm.imageUrl.trim(),
+        text_color: designForm.textColor || '#ffffff',
+        accent_color: designForm.accentColor || 'Gold',
       };
-      const { error } = await supabase
-        .from('cardDesigns')
-        .upsert(payload);
+      const response = await fetch('/api/designs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error('Failed to save design');
       alert('세련된 카드 디자인이 성공적으로 보존되었습니다!');
       setDesignForm({ id: '', name: '', imageUrl: '', textColor: '#ffffff', accentColor: 'Gold' });
       setEditingDesign(null);
@@ -211,12 +167,12 @@ export default function Admin() {
   const handleDeleteDesign = async (id: string) => {
     if (!confirm('정말로 이 카드 디자인 템플릿을 제거하시겠습니까?')) return;
     try {
-      const { error } = await supabase
-        .from('cardDesigns')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      const token = await getToken();
+      const response = await fetch(`/api/designs/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to delete design');
       alert('디자인 템플릿이 삭제되었습니다.');
       fetchDesigns();
     } catch (err) {
@@ -242,6 +198,7 @@ export default function Admin() {
     if (!settings) return;
     setSaving(true);
     try {
+      const token = await getToken();
       await saveSettings(settings);
       alert('설정이 저장되었습니다.');
     } catch (err) {
@@ -252,78 +209,31 @@ export default function Admin() {
     }
   };
 
-  const cascadeAncestorsUpdate = async (parentEmail: string, parentAncestors: string[], allUsers: any[]) => {
-    const directChildren = allUsers.filter(u => u.referredByEmail === parentEmail);
-    for (const child of directChildren) {
-      const childAncestors = [parentEmail, ...parentAncestors];
-      
-      await supabase
-        .from('users')
-        .update({ ancestors: childAncestors })
-        .eq('userId', child.userId);
-
-      // Recurse children recursively to maintain tree integrity
-      await cascadeAncestorsUpdate(child.email, childAncestors, allUsers);
-    }
-  };
-
   const handleSaveUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingUser) return;
     setSavingUser(true);
 
     try {
-      let ancestors: string[] = [];
-      const refEmailClean = editReferred.trim();
-
-      if (refEmailClean) {
-        // Find recruiter to fetch their ancestry line
-        const { data: recruiterData, error: recError } = await supabase
-          .from('users')
-          .select('ancestors')
-          .eq('email', refEmailClean)
-          .single();
-
-        if (recruiterData) {
-          ancestors = [refEmailClean, ...(recruiterData.ancestors || [])];
-        } else {
-          ancestors = [refEmailClean];
-        }
-      }
-
-      const updatedUser = {
-        ...editingUser,
-        displayName: editName,
-        phoneNumber: editPhone,
+      const token = await getToken();
+      const payload = {
+        display_name: editName,
+        phone_number: editPhone,
         tier: editTier,
         role: editRole,
-        referredByEmail: refEmailClean,
-        ancestors: ancestors,
+        referred_by_email: editReferred.trim(),
       };
+      
+      const response = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
 
-      // Save user to Supabase
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({
-          displayName: editName,
-          phoneNumber: editPhone,
-          tier: editTier,
-          role: editRole,
-          referredByEmail: refEmailClean,
-          ancestors: ancestors,
-        })
-        .eq('userId', editingUser.userId);
-
-      if (updateError) throw updateError;
-
-      // Recursive cascade trigger to update children of this updated user
-      const { data: allUsers, error: usersError } = await supabase
-        .from('users')
-        .select('*');
-
-      if (allUsers) {
-        await cascadeAncestorsUpdate(editingUser.email, ancestors, allUsers);
-      }
+      if (!response.ok) throw new Error('Failed to update user profile');
 
       alert('회원 정보 및 하위 추천 정보가 동기화 저장되었습니다.');
       setEditingUser(null);
@@ -338,11 +248,11 @@ export default function Admin() {
 
   const openEditModal = (targetUser: any) => {
     setEditingUser(targetUser);
-    setEditName(targetUser.displayName || '');
-    setEditPhone(targetUser.phoneNumber || '');
+    setEditName(targetUser.display_name || '');
+    setEditPhone(targetUser.phone_number || '');
     setEditTier(targetUser.tier || 'Basic');
     setEditRole(targetUser.role || 'User');
-    setEditReferred(targetUser.referredByEmail || '');
+    setEditReferred(targetUser.referred_by_email || '');
   };
 
   const getDesignName = (id: string) => {
@@ -378,38 +288,38 @@ export default function Admin() {
           </button>
         </div>
 
-        <div className="flex border-b border-slate-200">
+        <div className="flex border-b border-slate-200 overflow-x-auto">
           <button 
             onClick={() => setActiveTab('hero')}
-            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative ${activeTab === 'hero' ? 'text-blue-600' : 'text-slate-400'}`}
+            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative whitespace-nowrap ${activeTab === 'hero' ? 'text-blue-600' : 'text-slate-400'}`}
           >
             Hero Section
             {activeTab === 'hero' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600" />}
           </button>
           <button 
             onClick={() => setActiveTab('benefits')}
-            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative ${activeTab === 'benefits' ? 'text-blue-600' : 'text-slate-400'}`}
+            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative whitespace-nowrap ${activeTab === 'benefits' ? 'text-blue-600' : 'text-slate-400'}`}
           >
             Benefits
             {activeTab === 'benefits' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600" />}
           </button>
           <button 
             onClick={() => setActiveTab('users')}
-            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative ${activeTab === 'users' ? 'text-blue-600' : 'text-slate-400'}`}
+            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative whitespace-nowrap ${activeTab === 'users' ? 'text-blue-600' : 'text-slate-400'}`}
           >
             User Profiles (회원관리)
             {activeTab === 'users' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600" />}
           </button>
           <button 
             onClick={() => setActiveTab('applications')}
-            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative ${activeTab === 'applications' ? 'text-blue-600' : 'text-slate-400'}`}
+            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative whitespace-nowrap ${activeTab === 'applications' ? 'text-blue-600' : 'text-slate-400'}`}
           >
             Fan Registrations (나의 팬 등록 관리)
             {activeTab === 'applications' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600" />}
           </button>
           <button 
             onClick={() => setActiveTab('designs')}
-            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative ${activeTab === 'designs' ? 'text-blue-600' : 'text-slate-400'}`}
+            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative whitespace-nowrap ${activeTab === 'designs' ? 'text-blue-600' : 'text-slate-400'}`}
           >
             Fandom Photos (팬 사진/디자인 관리)
             {activeTab === 'designs' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600" />}
@@ -484,7 +394,7 @@ export default function Admin() {
                 <h3 className="text-xl font-bold">Manage Benefits</h3>
                 <button 
                   onClick={() => {
-                    const newBenefits = [...settings.benefits, { ...DEFAULT_SETTINGS.benefits[0], title: 'New Benefit' }];
+                    const newBenefits = [...settings.benefits, { ...settings.benefits[0], title: 'New Benefit' }];
                     setSettings({ ...settings, benefits: newBenefits });
                   }}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-black"
@@ -573,8 +483,8 @@ export default function Admin() {
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                       {usersList.map((usr) => (
-                        <tr key={usr.userId} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 font-bold text-slate-800">{usr.displayName}</td>
+                        <tr key={usr.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="p-4 font-bold text-slate-800">{usr.display_name}</td>
                           <td className="p-4 font-mono text-xs text-slate-500">{usr.email}</td>
                           <td className="p-4">
                             <span className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase ${
@@ -594,8 +504,8 @@ export default function Admin() {
                               {usr.role === 'Admin' ? '관리자' : usr.role === 'Sales' ? '크리에이터' : '일반회원'}
                             </span>
                           </td>
-                          <td className="p-4 text-xs font-semibold text-slate-500">{usr.phoneNumber || '미등록'}</td>
-                          <td className="p-4 text-xs font-mono text-slate-500">{usr.referredByEmail || '-'}</td>
+                          <td className="p-4 text-xs font-semibold text-slate-500">{usr.phone_number || '미등록'}</td>
+                          <td className="p-4 text-xs font-mono text-slate-500">{usr.referred_by_email || '-'}</td>
                           <td className="p-4">
                             <button
                               onClick={() => openEditModal(usr)}
@@ -651,37 +561,19 @@ export default function Admin() {
                         applicationsList.map((app) => (
                           <tr key={app.id} className="hover:bg-slate-50/50 transition-colors">
                             <td className="p-4">
-                              <div className="font-bold text-slate-800">{app.displayName}</div>
+                              <div className="font-bold text-slate-800">{app.display_name}</div>
                               <div className="text-[10px] text-slate-400 font-mono">{app.email}</div>
                             </td>
-                            <td className="p-4 font-black text-slate-900 tracking-wide">{app.cardName}</td>
+                            <td className="p-4 font-black text-slate-900 tracking-wide">{app.card_name}</td>
                             <td className="p-4 capitalize font-semibold text-xs text-blue-600">
-                              {app.cardColor === 'custom_uploaded' ? (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-emerald-700 font-black">직접 올린 사진</span>
-                                  {app.customImageUrl && (
-                                    <a 
-                                      href={app.customImageUrl} 
-                                      target="_blank" 
-                                      rel="noreferrer" 
-                                      className="w-10 h-7 rounded border border-slate-200 bg-cover bg-center shrink-0 hover:scale-105 transition-all inline-block shadow-sm"
-                                      style={{ backgroundImage: `url(${app.customImageUrl})` }}
-                                      title="새창으로 크게 보기"
-                                    />
-                                  )}
-                                </div>
-                              ) : (
-                                getDesignName(app.cardColor)
-                              )}
+                                {getDesignName(app.card_color)}
                             </td>
-                            <td className="p-4 text-xs font-semibold text-slate-600">{app.phoneNumber}</td>
-                            <td className="p-4 max-w-xs truncate text-xs text-slate-500 font-medium" title={`${app.address} ${app.detailAddress}`}>
-                              {app.address} {app.detailAddress}
+                            <td className="p-4 text-xs font-semibold text-slate-600">{app.phone_number}</td>
+                            <td className="p-4 max-w-xs truncate text-xs text-slate-500 font-medium" title={`${app.address} ${app.detail_address}`}>
+                              {app.address} {app.detail_address}
                             </td>
                             <td className="p-4 text-xs text-slate-400">
-                              {app.createdAt?.seconds 
-                                ? new Date(app.createdAt.seconds * 1000).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) 
-                                : '-'}
+                              {app.created_at ? new Date(app.created_at).toLocaleDateString() : '-'}
                             </td>
                             <td className="p-4">
                               <span className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase ${
@@ -751,7 +643,6 @@ export default function Admin() {
                 </button>
               </div>
 
-              {/* Editing or Create Form */}
               {editingDesign && (
                 <form onSubmit={handleSaveDesign} className="p-6 bg-slate-50 rounded-2xl border border-slate-100 space-y-6">
                   <div className="flex justify-between items-center">
@@ -773,7 +664,7 @@ export default function Admin() {
                       <input
                         type="text"
                         required
-                        disabled={designsList.some(d => d.id === designForm.id)}
+                        disabled={designsList.some(d => d.id === designForm.id) && !editingDesign.id}
                         value={designForm.id}
                         onChange={(e) => setDesignForm({ ...designForm, id: e.target.value.toLowerCase().replace(/[^a-z0-9_\-]/g, '') })}
                         placeholder="예: platinum_gold"
@@ -814,39 +705,14 @@ export default function Admin() {
 
                     <div className="md:col-span-2 space-y-1">
                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block font-sans">고해상 스타/팬 사진 배경 이미지 URL (HTTPS 경로)</label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          required
-                          value={designForm.imageUrl}
-                          onChange={(e) => setDesignForm({ ...designForm, imageUrl: e.target.value })}
-                          placeholder="예: https://images.unsplash.com/photo-..."
-                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-800 font-sans"
-                        />
-                        <select
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              const [url, color, name] = e.target.value.split('|');
-                              setDesignForm({
-                                ...designForm,
-                                imageUrl: url,
-                                textColor: color || '#ffffff',
-                                name: name || designForm.name
-                              });
-                            }
-                          }}
-                          className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-600 shrink-0 font-sans"
-                          defaultValue=""
-                        >
-                          <option value="" disabled>인기 있는 프리미엄 소재 퀵선택</option>
-                          <option value="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80|#5a2d2d|골든 로즈 럭셔리 대리석">골든 로즈 럭셔리 대리석 (Rose)</option>
-                          <option value="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80|#fbbf24|미니멀 다크 레이저 카본">미니멀 다크 레이저 카본 (Black)</option>
-                          <option value="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=800&q=80|#0f172a|하이테크 오로라 사이버넷">오로라 홀로그램 (Iridescent)</option>
-                          <option value="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80|#ffffff|황금 메탈릭 브러쉬 플루이드">황금 메탈릭 플루이드 (Gold/Titan)</option>
-                          <option value="https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80|#0ea5e9|프레시 마린 블루 코팅">프레시 마린 블루 코팅 (Deep Blue)</option>
-                          <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80|#ffffff|최고급 카라라 이태리 화이트 스톤">고품격 이태리 화이트 스톤 (White Marble)</option>
-                        </select>
-                      </div>
+                      <input
+                        type="text"
+                        required
+                        value={designForm.imageUrl}
+                        onChange={(e) => setDesignForm({ ...designForm, imageUrl: e.target.value })}
+                        placeholder="예: https://images.unsplash.com/photo-..."
+                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-800 font-sans"
+                      />
                     </div>
 
                     <div className="space-y-1">
@@ -864,252 +730,176 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  {/* Preview inside the editor */}
-                  <div className="space-y-2">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block font-sans">실시간 비주얼 카드 프리뷰</span>
-                    <div 
-                      className="relative rounded-2xl w-full max-w-sm aspect-[1.58/1] overflow-hidden shadow-xl border border-white/10 select-none bg-slate-200 bg-cover bg-center transition-all duration-300"
-                      style={{ backgroundImage: designForm.imageUrl ? `url(${designForm.imageUrl})` : undefined }}
-                    >
-                      <div className="absolute inset-0 bg-black/5" />
-                      <div 
-                        className="absolute top-4 left-4 text-[10px] font-black tracking-widest uppercase opacity-90 font-sans"
-                        style={{ color: designForm.textColor }}
-                      >
-                        JEONIL MEDIA VIP
-                      </div>
-                      <div className="absolute top-4 right-4 w-9 h-6 rounded-md bg-gradient-to-r from-yellow-300 to-yellow-600 shadow-inner opacity-80" />
-                      
-                      <div className="absolute bottom-4 left-4 space-y-1" style={{ color: designForm.textColor }}>
-                        <div className="font-mono text-xs tracking-widest opacity-90">
-                          4265 9182 3740 9999
-                        </div>
-                        <div className="flex items-center gap-1.5 text-[8px] font-bold tracking-widest uppercase opacity-80 font-sans">
-                          <span className="px-1 py-0.2 bg-white/20 rounded">
-                            LEGEND TIER
-                          </span>
-                          <span>{profile?.displayName?.toUpperCase() || 'NEW MEMBER'}</span>
-                        </div>
-                      </div>
-                      
-                      <div 
-                        className="absolute bottom-4 right-4 text-[9px] font-black uppercase italic tracking-widest opacity-50 font-sans"
-                        style={{ color: designForm.textColor }}
-                      >
-                        {designForm.accentColor}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end gap-3 pt-2">
+                  <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
                     <button
                       type="button"
                       onClick={() => setEditingDesign(null)}
-                      className="px-5 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-colors font-sans"
+                      className="px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-black hover:bg-slate-50 transition-all"
                     >
                       취소
                     </button>
                     <button
                       type="submit"
                       disabled={savingDesign}
-                      className="px-6 py-3 bg-blue-600 text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-blue-700 transition-all shadow-md shadow-blue-500/10 disabled:opacity-50 font-sans"
+                      className="flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-xl text-xs font-black shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all disabled:opacity-50"
                     >
-                      {savingDesign ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                      <span>디자인 저장 및 배포</span>
+                      {savingDesign ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      디자인 템플릿 저장
                     </button>
                   </div>
                 </form>
               )}
 
-              {/* Design List and Cards view */}
-              {loadingDesigns ? (
-                <div className="py-20 flex flex-col items-center justify-center gap-4">
-                  <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-                  <p className="text-slate-400 text-xs font-semibold font-sans">저장된 카드 디자인 목록을 동기화 중입니다...</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {designsList.map((design) => (
-                    <div key={design.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 hover:border-blue-200 hover:shadow-md transition-all flex flex-col justify-between space-y-4">
-                      {/* Premium Card Display */}
-                      <div 
-                        className="relative rounded-xl w-full aspect-[1.58/1] overflow-hidden shadow-md border border-slate-100/50 bg-slate-100 bg-cover bg-center"
-                        style={{ backgroundImage: `url(${design.imageUrl})` }}
-                      >
-                        <div className="absolute inset-0 bg-black/5" />
-                        <div 
-                          className="absolute top-3 left-3 text-[8px] font-black tracking-widest uppercase opacity-90 font-sans"
-                          style={{ color: design.textColor }}
-                        >
-                          JEONIL MEDIA VIP
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {designsList.map((design) => (
+                  <div key={design.id} className="group relative bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div className="aspect-[1.58/1] relative overflow-hidden">
+                      <img
+                        src={design.image_url}
+                        alt={design.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <div className="p-5 space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-sm font-black text-slate-800">{design.name}</h4>
+                          <span className="text-[10px] font-mono text-slate-400">{design.id}</span>
                         </div>
-                        <div className="absolute top-3 right-3 w-7 h-5 rounded bg-gradient-to-r from-yellow-300 to-yellow-600 shadow-inner opacity-80" />
-                        
-                        <div className="absolute bottom-3 left-3 space-y-0.5" style={{ color: design.textColor }}>
-                          <div className="font-mono text-[9px] tracking-wider opacity-90">
-                            4265 9182 3740 ****
-                          </div>
-                          <div className="text-[7px] font-bold tracking-widest uppercase opacity-80 font-sans">
-                            {design.name.split(' (')[0].slice(0, 15)}
-                          </div>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => {
+                              setEditingDesign(design);
+                              setDesignForm({
+                                id: design.id,
+                                name: design.name,
+                                imageUrl: design.image_url,
+                                textColor: design.text_color,
+                                accentColor: design.accent_color
+                              });
+                            }}
+                            className="p-2 bg-slate-50 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-colors"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteDesign(design.id)}
+                            className="p-2 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </div>
-
-                        <div 
-                          className="absolute bottom-3 right-3 text-[8px] font-black uppercase italic tracking-widest opacity-40 font-sans"
-                          style={{ color: design.textColor }}
-                        >
-                          {design.accentColor}
-                        </div>
-                      </div>
-
-                      {/* Detail text */}
-                      <div className="space-y-1">
-                        <div className="flex justify-between items-center">
-                          <h4 className="text-xs font-black text-slate-800 truncate block max-w-[70%] font-sans">{design.name}</h4>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 bg-slate-50 text-slate-400 border border-slate-100 rounded font-mono uppercase">{design.id}</span>
-                        </div>
-                        <div className="flex justify-between text-[10px] text-slate-400 font-medium font-sans">
-                          <span>인쇄선종: {design.accentColor}</span>
-                          <span className="font-mono">{design.textColor}</span>
-                        </div>
-                      </div>
-
-                      {/* Control buttons */}
-                      <div className="flex gap-2 pt-2 border-t border-slate-50">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingDesign(true);
-                            setDesignForm({
-                              id: design.id,
-                              name: design.name,
-                              imageUrl: design.imageUrl,
-                              textColor: design.textColor,
-                              accentColor: design.accentColor || 'Gold'
-                            });
-                          }}
-                          className="flex-1 py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-black text-slate-600 flex items-center justify-center gap-1 font-sans"
-                        >
-                          <Edit2 className="w-3 h-3" /> 수정
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteDesign(design.id)}
-                          className="py-2 px-3 bg-red-50 hover:bg-red-100 rounded-lg text-red-500 hover:text-red-700 transition-colors flex items-center justify-center"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Edit User Modal */}
       <AnimatePresence>
         {editingUser && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-slate-900/40 backdrop-blur-sm">
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="bg-white w-full max-w-lg rounded-3xl border border-slate-100 shadow-2xl p-8 space-y-6 relative overflow-hidden"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden"
             >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-blue-600" />
-                  <h3 className="text-xl font-black text-slate-900">회원 프로필 수정</h3>
+              <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-600 rounded-xl">
+                    <Edit2 className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-slate-900">회원 등급 및 프로필 수정</h2>
+                    <p className="text-xs text-slate-400 font-semibold">{editingUser.email}</p>
+                  </div>
                 </div>
-                <button 
-                  onClick={() => setEditingUser(null)}
-                  className="p-1 px-2.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors text-sm"
-                >
-                  <X className="w-5 h-5" />
+                <button onClick={() => setEditingUser(null)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                  <X className="w-5 h-5 text-slate-400" />
                 </button>
               </div>
 
-              <form onSubmit={handleSaveUser} className="space-y-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">이름</label>
-                  <input 
-                    type="text" 
-                    required
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">연락처</label>
-                  <input 
-                    type="text" 
-                    value={editPhone}
-                    onChange={(e) => setEditPhone(e.target.value)}
-                    placeholder="010-1234-5678"
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
-                  />
+              <form onSubmit={handleSaveUser} className="p-8 space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Display Name</label>
+                    <input 
+                      type="text" 
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-3.5 text-slate-800 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
+                    <input 
+                      type="text" 
+                      value={editPhone}
+                      onChange={(e) => setEditPhone(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-3.5 text-slate-800 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none"
+                    />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">등급 (Tier)</label>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Membership Tier</label>
                     <select 
                       value={editTier}
                       onChange={(e) => setEditTier(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-3.5 text-slate-800 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none"
                     >
-                      <option value="Basic">Basic</option>
-                      <option value="Gold">Gold</option>
-                      <option value="Legend Tier">Legend Tier</option>
+                      <option value="Basic">Basic (일반회원)</option>
+                      <option value="Gold">Gold (정회원/크리에이터)</option>
+                      <option value="Legend Tier">Legend Tier (VVIP)</option>
                     </select>
                   </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">역할 (Role)</label>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">System Role</label>
                     <select 
                       value={editRole}
                       onChange={(e) => setEditRole(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-3.5 text-slate-800 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none"
                     >
-                      <option value="User">일반 회원 (User)</option>
-                      <option value="Sales">크리에이터 (Sales)</option>
-                      <option value="Admin">관리자 (Admin)</option>
+                      <option value="User">User (팬)</option>
+                      <option value="Sales">Sales (크리에이터)</option>
+                      <option value="Admin">Admin (관리자)</option>
                     </select>
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">추천인 이메일 (Recommender Email)</label>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-blue-600">Recommender Email (추천인 수정)</label>
                   <input 
                     type="email" 
                     value={editReferred}
                     onChange={(e) => setEditReferred(e.target.value)}
-                    placeholder="recruiter@example.com"
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800"
+                    placeholder="추천인이 없을 경우 비워두세요"
+                    className="w-full bg-blue-50/50 border border-blue-100 rounded-2xl px-5 py-3.5 text-slate-800 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none"
                   />
-                  <p className="text-[9px] text-slate-400 font-semibold mt-1">※ 추천인을 변경할 시 하위 추천인들의 영업 연쇄 트리(Ancestors) 경로도 자동으로 재계산되어 동기화됩니다.</p>
+                  <p className="text-[10px] text-slate-400 font-semibold px-1">추천인 수정 시 계보(Ancestors)가 자동 재계산됩니다.</p>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 flex gap-3">
+                <div className="flex gap-3 pt-4">
                   <button 
                     type="button"
                     onClick={() => setEditingUser(null)}
-                    className="flex-1 py-3.5 bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all font-black text-xs rounded-xl text-center"
+                    className="flex-1 py-4 bg-slate-100 text-slate-600 font-black rounded-2xl hover:bg-slate-200 transition-all text-sm"
                   >
                     취소
                   </button>
                   <button 
                     type="submit"
                     disabled={savingUser}
-                    className="flex-1 py-3.5 bg-blue-600 text-white hover:bg-blue-700 transition-all font-black text-xs rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-500/10"
+                    className="flex-2 py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-600/20 hover:bg-blue-700 transition-all disabled:opacity-50 text-sm flex items-center justify-center gap-2"
                   >
-                    {savingUser && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                    저장하기
+                    {savingUser ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    변경사항 저장하기
                   </button>
                 </div>
               </form>
@@ -1120,26 +910,3 @@ export default function Admin() {
     </div>
   );
 }
-
-const DEFAULT_SETTINGS = {
-  hero: {
-    badge: "Shinji Official Project",
-    artist: "대한민국 댄스 레전드 그룹 코요태 신지",
-    title: "팬클럽",
-    subtitle: "카드출시",
-    tagline: "2026년 한정판 팬클럽기념 카드출시",
-    membershipFee: "₩550,000",
-  },
-  benefits: [
-    {
-      title: "New Benefit",
-      description: "Description here",
-      price: "Price here",
-      icon: "Star",
-      color: "from-blue-500 to-blue-600",
-      image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80",
-      date: "2026-07-15T18:00:00",
-      schedule: []
-    }
-  ]
-};

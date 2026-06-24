@@ -56,7 +56,7 @@ const programs = [
 
 export default function ServiceDetails() {
   return (
-    <section className="py-20 md:py-32 px-5 md:px-12 bg-[#02050c] relative overflow-hidden">
+    <section className="py-20 md:py-32 px-5 md:px-12 bg-transparent relative overflow-hidden">
       {/* Background neon glows */}
       <div className="absolute top-1/3 left-[10%] w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-1/3 right-[10%] w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none" />
@@ -65,7 +65,7 @@ export default function ServiceDetails() {
         {programs.map((program, pIndex) => (
           <div key={pIndex} className="space-y-12">
             <div className="text-center space-y-4">
-              <p className="text-amber-400 font-black text-xs md:text-sm tracking-widest uppercase flex items-center justify-center gap-1.5">
+              <p className="hidden md:flex text-amber-400 font-black text-xs md:text-sm tracking-widest uppercase items-center justify-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
                 {program.subtitle}
               </p>
@@ -99,7 +99,7 @@ export default function ServiceDetails() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: iIndex * 0.1 }}
-                    className={`bg-slate-950/70 backdrop-blur-md rounded-[2rem] overflow-hidden flex flex-col border ${borderGlowClass} transition-all duration-300 transform hover:-translate-y-1`}
+                    className={`bg-white/5 backdrop-blur-xl rounded-[2.5rem] overflow-hidden flex flex-col border ${borderGlowClass} transition-all duration-300 transform hover:-translate-y-2 shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.2)]`}
                   >
                     <div className="p-8 pb-4 flex flex-col items-center">
                       <div className="flex items-center gap-2 mb-3">
@@ -109,7 +109,7 @@ export default function ServiceDetails() {
                       <h3 className={`text-3xl md:text-4xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r ${iIndex % 3 === 0 ? 'from-blue-400 to-cyan-300' : iIndex % 3 === 1 ? 'from-purple-400 to-fuchsia-300' : 'from-amber-200 to-amber-400'} italic mb-3`}>
                         {item.type}
                       </h3>
-                      <p className="text-slate-400 text-xs md:text-sm font-bold text-center leading-relaxed min-h-[40px] px-2">{item.desc}</p>
+                      <p className="hidden md:block text-slate-400 text-xs md:text-sm font-bold text-center leading-relaxed min-h-[40px] px-2">{item.desc}</p>
                     </div>
                     
                     <div className="flex-1 grid grid-cols-1 gap-3 p-5 pt-3">

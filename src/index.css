@@ -8,91 +8,133 @@
 
 @layer base {
   body {
-    @apply bg-[#030712] text-slate-100 antialiased selection:bg-blue-500/30 overflow-x-hidden;
-    background-image: radial-gradient(circle at 50% 0%, rgba(30, 58, 138, 0.45) 0%, transparent 60%),
-                      radial-gradient(circle at 15% 45%, rgba(13, 148, 136, 0.18) 0%, transparent 50%),
-                      radial-gradient(circle at 85% 75%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                      radial-gradient(circle at 35% 85%, rgba(168, 85, 247, 0.12) 0%, transparent 40%);
-    background-size: 200% 200%;
+    @apply bg-[#050814] text-slate-100 antialiased selection:bg-amber-500/30 overflow-x-hidden;
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(210, 154, 56, 0.22) 0%, transparent 50%),
+      radial-gradient(circle at 85% 15%, rgba(0, 229, 255, 0.25) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(5, 8, 20, 1) 0%, transparent 100%),
+      radial-gradient(circle at 80% 80%, rgba(213, 0, 249, 0.18) 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(101, 31, 255, 0.2) 0%, transparent 50%),
+      linear-gradient(155deg, #050814 0%, #0e142b 100%);
     background-attachment: fixed;
-    animation: aurora-boreal 25s ease infinite;
+    background-size: 300% 300%;
+    animation: 
+      aurora-boreal 22s ease infinite,
+      aurora-pulse 14s ease-in-out infinite;
+  }
+}
+
+@keyframes aurora-pulse {
+  0%, 100% {
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(1.15) saturate(1.2);
   }
 }
 
 @keyframes aurora-boreal {
-  0% {
-    background-position: 0% 20%;
+  0%, 100% {
+    background-position: 0% 50%;
+    filter: hue-rotate(0deg) saturate(1);
   }
-  50% {
-    background-position: 100% 80%;
+  33% {
+    background-position: 100% 50%;
+    filter: hue-rotate(30deg) saturate(1.2);
   }
-  100% {
-    background-position: 0% 20%;
+  66% {
+    background-position: 50% 100%;
+    filter: hue-rotate(-30deg) saturate(0.8);
   }
 }
 
 @layer utilities {
   /* 3D Tactile Neon Button */
   .btn-neon-3d-blue {
-    @apply relative px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm uppercase tracking-widest rounded-2xl transition-all duration-200 transform active:translate-y-0.5 select-none text-center;
-    box-shadow: 0 4px 0 0 #1e3a8a, 0 8px 20px 0 rgba(59, 130, 246, 0.4);
+    @apply relative px-8 py-4 bg-gradient-to-r from-[#2979FF] via-[#00E5FF] to-[#311B92] text-white font-black text-sm uppercase tracking-widest rounded-2xl transition-all duration-200 transform active:translate-y-0.5 select-none text-center;
+    box-shadow: 0 4px 0 0 #1a237e, 0 8px 20px 0 rgba(0, 229, 255, 0.4);
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
   .btn-neon-3d-blue:active {
-    box-shadow: 0 2px 0 0 #1e3a8a, 0 4px 10px 0 rgba(59, 130, 246, 0.4);
+    box-shadow: 0 2px 0 0 #1a237e, 0 4px 10px 0 rgba(0, 229, 255, 0.4);
   }
 
   .btn-neon-3d-gold {
-    @apply relative px-8 py-4 bg-gradient-to-r from-[#D4AF37] via-[#F5D88D] to-[#9C6B1B] text-[#1a1105] font-black text-sm uppercase tracking-widest rounded-2xl transition-all duration-200 transform active:translate-y-0.5 select-none text-center;
-    box-shadow: 0 4px 0 0 #78350f, 0 8px 20px 0 rgba(212, 175, 55, 0.35);
+    @apply relative px-8 py-4 bg-gradient-to-r from-[#FFF1C5] via-[#E9C168] to-[#9C6B1B] text-[#1a1105] font-black text-sm uppercase tracking-widest rounded-2xl transition-all duration-200 transform active:translate-y-0.5 select-none text-center;
+    box-shadow: 0 4px 0 0 #78350f, 0 8px 20px 0 rgba(233, 193, 104, 0.35);
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.4);
   }
   .btn-neon-3d-gold:active {
-    box-shadow: 0 2px 0 0 #78350f, 0 4px 10px 0 rgba(212, 175, 55, 0.35);
+    box-shadow: 0 2px 0 0 #78350f, 0 4px 10px 0 rgba(233, 193, 104, 0.35);
   }
 
   .btn-neon-3d-purple {
-    @apply relative px-8 py-4 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white font-black text-sm uppercase tracking-widest rounded-2xl transition-all duration-200 transform active:translate-y-0.5 select-none text-center;
-    box-shadow: 0 4px 0 0 #581c87, 0 8px 20px 0 rgba(168, 85, 247, 0.4);
+    @apply relative px-8 py-4 bg-gradient-to-r from-[#651FFF] via-[#D500F9] to-[#FF1744] text-white font-black text-sm uppercase tracking-widest rounded-2xl transition-all duration-200 transform active:translate-y-0.5 select-none text-center;
+    box-shadow: 0 4px 0 0 #4a148c, 0 8px 20px 0 rgba(213, 0, 249, 0.4);
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
   .btn-neon-3d-purple:active {
-    box-shadow: 0 2px 0 0 #581c87, 0 4px 10px 0 rgba(168, 85, 247, 0.4);
+    box-shadow: 0 2px 0 0 #4a148c, 0 4px 10px 0 rgba(213, 0, 249, 0.4);
   }
 
   /* Glowing Neon Lines */
   .neon-line-blue {
-    @apply h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent w-full;
-    box-shadow: 0 0 12px #3b82f6, 0 0 4px #60a5fa;
+    @apply h-[2px] bg-gradient-to-r from-transparent via-[#00E5FF] to-transparent w-full;
+    box-shadow: 0 0 12px #00E5FF, 0 0 4px #2979FF;
   }
   
   .neon-line-purple {
-    @apply h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent w-full;
-    box-shadow: 0 0 12px #a855f7, 0 0 4px #c084fc;
+    @apply h-[2px] bg-gradient-to-r from-transparent via-[#D500F9] to-transparent w-full;
+    box-shadow: 0 0 12px #D500F9, 0 0 4px #651FFF;
   }
 
   .neon-line-gold {
-    @apply h-[2px] bg-gradient-to-r from-transparent via-[#e9c168] to-transparent w-full;
-    box-shadow: 0 0 12px #d4af37, 0 0 4px #f5d88d;
+    @apply h-[2px] bg-gradient-to-r from-transparent via-[#E9C168] to-transparent w-full;
+    box-shadow: 0 0 12px #D29A38, 0 0 4px #FFF1C5;
   }
 
-  /* Neon Border Cards */
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+  }
+
+  /* Neon Glow Box Wrapper */
   .neon-card-blue {
-    @apply bg-slate-950/80 backdrop-blur-md border border-blue-500/30 rounded-3xl p-6 md:p-8 transition-all hover:border-blue-400/60;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 15px 0 rgba(59, 130, 246, 0.1);
+    @apply bg-white/5 backdrop-blur-lg border border-[#00E5FF]/20 rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-8 transition-all duration-300 hover:border-[#00E5FF]/50 hover:-translate-y-1.5;
+    box-shadow: 
+      0 20px 40px -15px rgba(0, 0, 0, 0.6), 
+      0 0 20px 0 rgba(0, 229, 255, 0.05),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
   }
 
   .neon-card-purple {
-    @apply bg-slate-950/80 backdrop-blur-md border border-purple-500/30 rounded-3xl p-6 md:p-8 transition-all hover:border-purple-400/60;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 15px 0 rgba(168, 85, 247, 0.1);
+    @apply bg-white/5 backdrop-blur-lg border border-[#D500F9]/20 rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-8 transition-all duration-300 hover:border-[#D500F9]/50 hover:-translate-y-1.5;
+    box-shadow: 
+      0 20px 40px -15px rgba(0, 0, 0, 0.6), 
+      0 0 20px 0 rgba(213, 0, 249, 0.05),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .neon-line-blue {
+    @apply h-[2px] bg-gradient-to-r from-transparent via-[#00E5FF] to-transparent w-full;
+    box-shadow: 0 0 12px #00E5FF, 0 0 4px #2979FF;
   }
 
   .neon-card-gold {
-    @apply bg-slate-950/80 backdrop-blur-md border border-[#d4af37]/30 rounded-3xl p-6 md:p-8 transition-all hover:border-[#d4af37]/60;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 15px 0 rgba(212, 175, 55, 0.15);
+    @apply bg-white/5 backdrop-blur-lg border border-[#d4af37]/20 rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-8 transition-all duration-300 hover:border-[#d4af37]/50 hover:-translate-y-1.5;
+    box-shadow: 
+      0 20px 40px -15px rgba(0, 0, 0, 0.6), 
+      0 0 20px 0 rgba(212, 175, 55, 0.1),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
   }
 
   .brand-bg {

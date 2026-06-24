@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
+import { ParticleSystem } from './components/ParticleSystem';
 import Footer from './components/Footer';
 import ChatWidget from './components/ChatWidget';
 import Home from './pages/Home';
@@ -15,7 +16,8 @@ export default function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-white font-sans scroll-smooth">
+        <div className="min-h-screen font-sans scroll-smooth">
+          <ParticleSystem />
           <Header />
           <main>
             <Routes>

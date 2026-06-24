@@ -6,6 +6,7 @@ import Trust from '../components/Trust';
 import ValueComparison from '../components/ValueComparison';
 import Testimonials from '../components/Testimonials';
 import FAQ from '../components/FAQ';
+import Partnership from '../components/Partnership';
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
       <ValueComparison />
       <Testimonials />
       <FAQ />
+      <Partnership />
     </>
   );
 }

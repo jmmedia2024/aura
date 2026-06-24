@@ -12,7 +12,7 @@ export default function Benefits() {
   if (loading) return null;
 
   return (
-    <section id="benefits" className="py-20 md:py-28 px-5 md:px-12 bg-[#040815] relative z-10 overflow-hidden">
+    <section id="benefits" className="py-20 md:py-28 px-5 md:px-12 bg-transparent relative z-10 overflow-hidden">
       {/* Background Neon Lights */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
 
@@ -28,7 +28,7 @@ export default function Benefits() {
           <div className="neon-line-blue max-w-xs mx-auto opacity-60" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {settings.benefits.map((benefit: any, index: number) => {
             const IconComponent = ICON_MAP[benefit.icon] || Plus;
             
@@ -71,13 +71,13 @@ export default function Benefits() {
                 </div>
 
                 <div className="space-y-4 relative z-10">
-                   <div className={`inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase border ${tagColor}`}>
+                   <div className={`hidden sm:inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase border ${tagColor}`}>
                      BENEFIT {index + 1}
                    </div>
-                   <h3 className="text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-amber-200 transition-colors">
+                   <h3 className="text-lg md:text-2xl font-black text-white tracking-tight group-hover:text-amber-200 transition-colors">
                      {benefit.title}
                    </h3>
-                   <p className="text-slate-400 text-xs md:text-sm leading-relaxed min-h-[48px]">
+                   <p className="hidden md:block text-slate-400 text-[11px] md:text-sm leading-relaxed min-h-[40px] md:min-h-[48px]">
                      {benefit.description}
                    </p>
                    
@@ -85,7 +85,7 @@ export default function Benefits() {
                    <div className="pt-4 border-t border-slate-800/60 flex justify-between items-center">
                       <span className="text-[11px] font-bold text-slate-400/90">{benefit.price}</span>
                       <button className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest group-hover:gap-2.5 transition-all ${btnColor}`}>
-                         자세히 보기
+                         <span className="hidden sm:inline">자세히 보기</span>
                          <Plus className="w-3.5 h-3.5" />
                       </button>
                    </div>

@@ -26,7 +26,7 @@ function MapPlaceholder({ location }: MapPlaceholderProps) {
   const isCruise = location.includes('크루즈');
 
   return (
-    <div className="relative w-full h-40 bg-slate-950 rounded-2xl overflow-hidden border border-blue-500/20 group">
+    <div className="relative w-full h-40 bg-white/5 backdrop-blur-md rounded-2xl overflow-hidden border border-cyan-500/20 group">
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         {/* Simple Grid Pattern for Map-like feel */}
         <div className="absolute inset-0 bg-blue-500/10" style={{ backgroundImage: 'radial-gradient(rgba(59, 130, 246, 0.2) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
@@ -133,7 +133,7 @@ export default function BenefitModal({ isOpen, onClose, benefit }: BenefitModalP
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-4xl bg-slate-950 border border-blue-500/20 rounded-[2rem] overflow-hidden shadow-[0_0_50px_rgba(59,130,246,0.3)] flex flex-col md:flex-row h-full max-h-[90vh] md:h-auto z-[110]"
+            className="relative w-full max-w-4xl bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_30px_70px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col md:flex-row h-full max-h-[90vh] md:h-auto z-[110]"
           >
             {/* Image & Countdown Section */}
             <div className="relative w-full md:w-1/2 h-56 md:h-auto min-h-[250px] md:min-h-0">
@@ -143,10 +143,10 @@ export default function BenefitModal({ isOpen, onClose, benefit }: BenefitModalP
                 alt={benefit.title}
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-slate-950/65 hidden md:block" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#081b33] via-[#081b33]/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#081b33]/65 hidden md:block" />
               
-              <div className="absolute bottom-6 left-6 right-6 text-white bg-slate-950/85 p-5 rounded-2xl border border-blue-500/20 backdrop-blur-sm shadow-xl">
+              <div className="absolute bottom-6 left-6 right-6 text-white bg-white/10 p-5 rounded-2xl border border-white/10 backdrop-blur-md shadow-xl">
                 <div className="text-[10px] uppercase font-black tracking-[0.2em] mb-3 text-cyan-400 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '6s' }} />
                   Next Event Countdown

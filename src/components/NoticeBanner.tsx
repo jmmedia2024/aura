@@ -71,23 +71,23 @@ export default function NoticeBanner() {
   if (!isVisible) return null;
 
   return (
-    <div className="relative w-full bg-[#02050c] pt-20 pb-1 px-4 md:px-8 z-40">
+    <div className="relative w-full bg-transparent pt-20 pb-1 px-4 md:px-8 z-40">
       <div className="max-w-7xl mx-auto">
         {/* Neon Glow Box Wrapper */}
-        <div className="relative overflow-hidden rounded-2xl border border-blue-500/40 bg-[#050b18]/90 backdrop-blur-md px-4 py-3.5 shadow-[0_0_20px_rgba(59,130,246,0.25)] flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6">
+        <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-white/5 backdrop-blur-xl px-4 py-3.5 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6">
           
           {/* Animated Neon Background Line */}
-          <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-pulse" />
+          <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 to-transparent animate-pulse" />
           
           {/* Left Title Label */}
           <div className="flex items-center gap-3 shrink-0">
-            <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-400/30 text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
+            <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-400/30 text-amber-400 shadow-[0_0_10px_rgba(212,175,55,0.2)]">
               <Megaphone className="w-4 h-4 animate-[bounce_1.5s_infinite]" />
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 border border-[#02050c] animate-ping" />
             </div>
             <div className="text-left">
               <h3 className="text-xs md:text-sm font-black tracking-widest text-slate-100 uppercase flex items-center gap-1">
-                실시간 소식
+                <span className="hidden md:inline">실시간 소식</span>
                 <span className="text-[9px] bg-red-500/15 text-red-400 border border-red-500/20 px-1 py-0.2 rounded font-black tracking-normal animate-pulse">LIVE</span>
               </h3>
               <p className="text-[10px] text-slate-400 font-bold hidden sm:block">공연 일정 및 회원 혜택 안내</p>
@@ -113,7 +113,7 @@ export default function NoticeBanner() {
                 {/* Notice Text */}
                 <Link 
                   to={NOTICES[currentIndex].link} 
-                  className="text-xs md:text-sm font-semibold text-slate-200 hover:text-cyan-400 transition-colors duration-200 truncate pr-4 text-center md:text-left hover:underline"
+                  className="text-xs md:text-sm font-semibold text-slate-200 hover:text-amber-400 transition-colors duration-200 truncate pr-4 text-center md:text-left hover:underline max-w-[180px] sm:max-w-none"
                 >
                   {NOTICES[currentIndex].text}
                 </Link>
@@ -126,10 +126,10 @@ export default function NoticeBanner() {
             {/* Quick Link Button */}
             <Link 
               to={NOTICES[currentIndex].link}
-              className="px-3.5 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-400/30 hover:border-blue-400/60 rounded-xl text-[11px] font-black text-cyan-300 transition-all duration-300 flex items-center gap-1 group shadow-[0_0_12px_rgba(59,130,246,0.15)] cursor-pointer"
+              className="px-3.5 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-400/30 hover:border-amber-400/60 rounded-xl text-[11px] font-black text-amber-300 transition-all duration-300 flex items-center gap-1 group shadow-[0_0_12px_rgba(212,175,55,0.15)] cursor-pointer"
             >
-              상세보기
-              <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              <span className="hidden sm:inline">상세보기</span>
+              <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
 
             {/* Dismiss Close Button */}

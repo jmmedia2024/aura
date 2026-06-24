@@ -5,23 +5,23 @@ import { useState } from 'react';
 const faqs = [
   {
     question: "카드 발급까지 얼마나 걸리나요?",
-    answer: "온라인 가입 완료 후, 코요태 신지의 고유 이미지가 각인된 한정판 카드가 수작업으로 제작됩니다. 실물 카드는 가입 후 약 14일 이내에 등기 우편으로 발송됩니다."
+    answer: "온라인 가입 완료 후, R.ef의 30주년 한정판 디자인이 각인된 VIP 골드 카드가 수작업으로 제작됩니다. 실물 카드는 가입 후 약 14일 이내에 등기 우편으로 발송됩니다."
   },
   {
     question: "리콜 리워드(10만원 리턴)은 언제 지급되나요?",
     answer: "해당 차수의 이벤트가 모두 종료된 시점에 미참석 이력이 확인되면, 등록하신 계좌로 영업일 5일 이내에 환급됩니다."
   },
   {
-    question: "코요태 신지 단독 공연 일정은 언제인가요?",
-    answer: "매년 상하반기 각 1회씩 정기 공연이 개최됩니다. 정확한 일시는 가입 시 안내드리는 회원 전용 앱 또는 문자를 통해 최소 1개월 전 공지해 드립니다."
+    question: "R.ef 30주년 콘서트 일정은 언제인가요?",
+    answer: "30주년 기념 메인 공연은 가을 시즌 잠실에서 개최될 예정입니다. 정확한 일시는 가입 시 안내드리는 회원 전용 핫라인 또는 문자를 통해 최소 1개월 전 공지해 드립니다."
   },
   {
     question: "기념 주화와 굿즈 상품은 어떤 것들인가요?",
-    answer: "2026년 한정판으로 제작된 코요태 신지 기념 금주화와 더불어, 신지님의 친필 사인이 담긴 에코백, 포토북, 기념 달력 등 소장 가치가 높은 굿즈들이 패키지로 제공됩니다."
+    answer: "R.ef 30주년을 기념하여 제작된 한정판 24K 순금 카드와 더불어, 멤버들의 친필 사인이 담긴 30주년 화보집, 미공개 레전드 포토북 등 소장 가치가 높은 굿즈들이 VIP 패키지로 제공됩니다."
   },
   {
-    question: "추가 인원 동반이 가능한가요?",
-    answer: "속초 디너 팬미팅은 기본 2인 1조 숙박권이 제공되어 동반 1인이 가능합니다. 기타 공연 혜택은 회원 본인 기준이며, 동반 인원은 유료로 추가 구매가 가능하도록 지원합니다."
+    question: "동반 1인 혜택이 포함되나요?",
+    answer: "팬 크루즈와 프리미엄 디너쇼의 경우 기본 2인 기준으로 혜택이 설계되어 동반 1인이 가능합니다. 기타 공연 혜택은 회원 본인 기준이며, 동반 인원은 우선 예약권을 통해 별도 구매가 가능합니다."
   }
 ];
 
@@ -29,9 +29,9 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="py-20 md:py-28 px-5 md:px-12 bg-[#040815] border-t border-slate-900/60 relative overflow-hidden">
+    <section id="faq" className="py-20 md:py-28 px-5 md:px-12 bg-transparent border-t border-slate-900/60 relative overflow-hidden">
       {/* Glow highlight */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-amber-500/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-3xl mx-auto relative z-10">
         <div className="text-center mb-12 md:mb-16 space-y-4">
@@ -42,7 +42,7 @@ export default function FAQ() {
           <h2 className="text-3xl md:text-5xl font-display font-black tracking-tighter text-white">
             자주 묻는 질문
           </h2>
-          <div className="neon-line-blue max-w-[150px] mx-auto opacity-50" />
+          <div className="neon-line-gold max-w-[150px] mx-auto opacity-50" />
         </div>
 
         <div className="space-y-4">
@@ -51,8 +51,8 @@ export default function FAQ() {
             
             // Neon accent border based on state
             const borderClass = isOpen 
-              ? 'border-blue-500/40 shadow-[0_0_15px_rgba(59,130,246,0.15)] bg-slate-950' 
-              : 'border-slate-800/60 bg-slate-950/60 hover:border-slate-700 hover:bg-slate-950/80';
+              ? 'border-amber-500/40 shadow-[0_20px_40px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] bg-white/10 backdrop-blur-xl -translate-y-1' 
+              : 'border-slate-800/60 bg-white/5 backdrop-blur-sm hover:border-slate-700 hover:bg-white/10 hover:shadow-lg';
 
             return (
               <div 
@@ -61,7 +61,7 @@ export default function FAQ() {
               >
                 <button 
                   onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full px-6 md:px-8 py-5 flex items-center justify-between text-left transition-colors"
+                  className="w-full px-4 md:px-8 py-4 md:py-5 flex items-center justify-between text-left transition-colors"
                 >
                   <span className={`font-black text-sm md:text-base leading-snug pr-4 transition-colors ${isOpen ? 'text-amber-200' : 'text-slate-200 hover:text-white'}`}>
                     {faq.question}
