@@ -14,6 +14,11 @@ import {
   CreditCard,
   Check,
   Ban,
+  Activity,
+  TrendingUp,
+  BarChart,
+  PieChart,
+  Clock,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/AuthContext.tsx";
@@ -27,8 +32,14 @@ export default function Admin() {
   const [settings, setSettings] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    "hero" | "benefits" | "users" | "applications" | "designs" | "meetings"
-  >("hero");
+    | "overview"
+    | "hero"
+    | "benefits"
+    | "users"
+    | "applications"
+    | "designs"
+    | "meetings"
+  >("overview");
 
   // User list states
   const [usersList, setUsersList] = useState<any[]>([]);
@@ -217,7 +228,10 @@ export default function Admin() {
 
   useEffect(() => {
     if (isAdmin) {
-      if (activeTab === "users") {
+      if (activeTab === "overview") {
+        fetchUsers();
+        fetchApplications();
+      } else if (activeTab === "users") {
         fetchUsers();
       } else if (activeTab === "applications") {
         fetchApplications();
@@ -333,6 +347,18 @@ export default function Admin() {
 
         <div className="flex border-b border-slate-200 overflow-x-auto">
           <button
+            onClick={() => setActiveTab("overview")}
+            className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative whitespace-nowrap ${activeTab === "overview" ? "text-blue-600" : "text-slate-400"}`}
+          >
+            Overview (대시보드)
+            {activeTab === "overview" && (
+              <motion.div
+                layoutId="tab"
+                className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600"
+              />
+            )}
+          </button>
+          <button
             onClick={() => setActiveTab("hero")}
             className={`px-8 py-4 text-sm font-black tracking-widest uppercase transition-colors relative whitespace-nowrap ${activeTab === "hero" ? "text-blue-600" : "text-slate-400"}`}
           >
@@ -407,6 +433,205 @@ export default function Admin() {
         </div>
 
         <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
+          {activeTab === "overview" && (
+            <div className="space-y-8">
+              <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                <Activity className="w-5 h-5 text-blue-600" />
+                <h3 className="text-lg font-black text-slate-900">
+                  대시보드 개요 (Overview)
+                </h3>
+              </div>
+
+              {loadingUsers || loadingApps ? (
+                <div className="py-20 flex flex-col items-center justify-center gap-4">
+                  <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+                  <p className="text-slate-400 text-xs font-semibold">
+                    데이터를 불러오는 중입니다...
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {/* Total Users */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex flex-col gap-4">
+                    <div className="flex items-center justify-between text-slate-500">
+                      <h4 className="text-xs font-black uppercase tracking-widest">
+                        총 가입 회원
+                      </h4>
+                      <Users className="w-4 h-4" />
+                    </div>
+                    <div className="text-3xl font-black text-slate-900">
+                      {usersList.length}
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                      <TrendingUp className="w-3 h-3 text-emerald-500" />
+                      <span className="text-emerald-500">지속적인 성장</span>
+                    </div>
+                  </div>
+
+                  {/* Total Applications */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex flex-col gap-4">
+                    <div className="flex items-center justify-between text-slate-500">
+                      <h4 className="text-xs font-black uppercase tracking-widest">
+                        총 팬 멤버십 신청
+                      </h4>
+                      <CreditCard className="w-4 h-4" />
+                    </div>
+                    <div className="text-3xl font-black text-slate-900">
+                      {applicationsList.length}
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                      <TrendingUp className="w-3 h-3 text-emerald-500" />
+                      <span>이번 주 활발함</span>
+                    </div>
+                  </div>
+
+                  {/* Pending Applications */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex flex-col gap-4">
+                    <div className="flex items-center justify-between text-slate-500">
+                      <h4 className="text-xs font-black uppercase tracking-widest">
+                        대기중인 신청
+                      </h4>
+                      <Clock className="w-4 h-4" />
+                    </div>
+                    <div className="text-3xl font-black text-slate-900">
+                      {
+                        applicationsList.filter(
+                          (app) => app.status === "pending",
+                        ).length
+                      }
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-semibold">
+                      빠른 처리가 필요합니다
+                    </div>
+                  </div>
+
+                  {/* Admin Users */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex flex-col gap-4">
+                    <div className="flex items-center justify-between text-slate-500">
+                      <h4 className="text-xs font-black uppercase tracking-widest">
+                        관리자 & 운영진
+                      </h4>
+                      <ShieldAlert className="w-4 h-4" />
+                    </div>
+                    <div className="text-3xl font-black text-slate-900">
+                      {
+                        usersList.filter(
+                          (u) => u.role === "Admin" || u.role === "Sales",
+                        ).length
+                      }
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-semibold">
+                      시스템 권한 보유자
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Recent Activity lists */}
+              {!loadingUsers && !loadingApps && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+                  {/* Recent Users */}
+                  <div className="bg-white border border-slate-100 rounded-3xl p-6">
+                    <h4 className="text-sm font-black text-slate-800 mb-6 flex items-center gap-2">
+                      <Users className="w-4 h-4 text-blue-600" />
+                      최근 가입 회원
+                    </h4>
+                    <div className="space-y-4">
+                      {usersList.slice(0, 5).map((user) => (
+                        <div
+                          key={user.id}
+                          className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100"
+                        >
+                          <div>
+                            <div className="font-bold text-sm text-slate-900">
+                              {user.display_name || "이름 없음"}
+                            </div>
+                            <div className="text-xs text-slate-500 font-mono">
+                              {user.email}
+                            </div>
+                          </div>
+                          <div
+                            className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase ${
+                              user.tier === "Legend Tier"
+                                ? "bg-amber-100 text-amber-700"
+                                : user.tier === "Gold"
+                                  ? "bg-slate-200 text-slate-800"
+                                  : "bg-blue-100 text-blue-700"
+                            }`}
+                          >
+                            {user.tier}
+                          </div>
+                        </div>
+                      ))}
+                      {usersList.length === 0 && (
+                        <div className="text-center text-xs text-slate-400 py-4">
+                          가입 내역이 없습니다.
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setActiveTab("users")}
+                      className="mt-6 w-full py-3 text-xs font-bold text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                    >
+                      모든 회원 관리 보기 →
+                    </button>
+                  </div>
+
+                  {/* Recent Applications */}
+                  <div className="bg-white border border-slate-100 rounded-3xl p-6">
+                    <h4 className="text-sm font-black text-slate-800 mb-6 flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-blue-600" />
+                      최근 등록된 팬 신청
+                    </h4>
+                    <div className="space-y-4">
+                      {applicationsList.slice(0, 5).map((app) => (
+                        <div
+                          key={app.id}
+                          className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100"
+                        >
+                          <div>
+                            <div className="font-bold text-sm text-slate-900">
+                              {app.full_name}
+                            </div>
+                            <div className="text-[10px] text-slate-500 mt-1">
+                              {new Date(app.created_at).toLocaleDateString()}
+                            </div>
+                          </div>
+                          <div
+                            className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${
+                              app.status === "approved"
+                                ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                                : app.status === "rejected"
+                                  ? "bg-red-100 text-red-700 border border-red-200"
+                                  : "bg-amber-100 text-amber-700 border border-amber-200"
+                            }`}
+                          >
+                            {app.status === "approved"
+                              ? "승인됨"
+                              : app.status === "rejected"
+                                ? "반려됨"
+                                : "심사중"}
+                          </div>
+                        </div>
+                      ))}
+                      {applicationsList.length === 0 && (
+                        <div className="text-center text-xs text-slate-400 py-4">
+                          신청 내역이 없습니다.
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setActiveTab("applications")}
+                      className="mt-6 w-full py-3 text-xs font-bold text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                    >
+                      모든 신청 심사 보기 →
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {activeTab === "hero" && (
             <div className="space-y-6 max-w-2xl">
               <div className="space-y-2">
@@ -1085,7 +1310,7 @@ export default function Admin() {
               <div className="max-w-2xl bg-slate-900 rounded-3xl overflow-hidden p-6 text-white">
                 <MeetIntegration />
               </div>
-              
+
               <div className="mt-8">
                 <ChatIntegration />
               </div>
