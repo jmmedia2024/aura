@@ -9,6 +9,9 @@ const provider = new GoogleAuthProvider();
 provider.addScope('https://www.googleapis.com/auth/meetings.space.created');
 provider.addScope('https://www.googleapis.com/auth/meetings.space.readonly');
 provider.addScope('https://www.googleapis.com/auth/meetings.space.settings');
+provider.addScope('https://www.googleapis.com/auth/chat.spaces');
+provider.addScope('https://www.googleapis.com/auth/chat.messages');
+provider.addScope('https://www.googleapis.com/auth/chat.memberships');
 
 let isSigningIn = false;
 let cachedAccessToken: string | null = null;
