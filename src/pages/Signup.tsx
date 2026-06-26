@@ -74,6 +74,10 @@ export default function Signup() {
 
       if (supabaseError) throw supabaseError;
 
+      if (!authData.session) {
+        alert('회원가입이 완료되었습니다. 이메일을 확인하여 인증을 완료해주세요.');
+      }
+      
       navigate('/');
     } catch (err: any) {
       console.error(err);

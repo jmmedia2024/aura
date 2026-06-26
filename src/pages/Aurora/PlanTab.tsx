@@ -1,318 +1,507 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Sparkles, Gift, Star, Award, MapPin, Calendar, Compass, ShieldCheck, Heart, ArrowUpRight } from 'lucide-react';
+import { 
+  Sparkles, 
+  Gift, 
+  Star, 
+  Award, 
+  MapPin, 
+  Compass, 
+  ShieldCheck, 
+  Heart, 
+  Users, 
+  Building, 
+  Coins, 
+  Percent, 
+  Handshake, 
+  UserCheck, 
+  MessageSquare, 
+  Flame, 
+  Zap, 
+  ArrowUpRight,
+  ShieldAlert,
+  HelpCircle,
+  TrendingUp,
+  Award as AwardIcon
+} from 'lucide-react';
 
 export default function PlanTab() {
-  const products = [
-    {
-      title: "① 2026 한정판 팬덤 프리패스 카드",
-      subtitle: "스마트 온라인 사전 연동 완료",
-      highlights: [
-        "회원 직접 선택 아티스트 디자인",
-        "아티스트 친필 사인 고해상도 각인",
-        "2026 한정판 피지컬 소장용 카드",
-        "회원 고유번호 및 팬덤 오로라 인증"
-      ],
-      comment: "회원 가입 완료 후 15일 ~ 30일 이내에 등기 수령",
-      icon: <Award className="w-5 h-5 text-blue-600 animate-pulse" />
-    },
-    {
-      title: "② 오로라 아티스트 기념 순금화",
-      subtitle: "고품격 실물 서장 가치 제공",
-      highlights: [
-        "선택 아티스트 초상 레이저 정밀 세공",
-        "2026 한정판 일련번호 레이저 각인",
-        "아티스트 영문 기념 싸인 디자인",
-        "팬덤 보관용 최고급 아크릴 케이스 케어"
-      ],
-      comment: "회원 가입 완료 시 즉각적인 자택 무상 배송 기회 제공",
-      icon: <Gift className="w-5 h-5 text-amber-500" />
-    }
-  ];
-
-  const events = [
-    {
-      stage: "1차 특별 행사",
-      title: "VIP 스카이라운지 오션 뷰 팬미팅",
-      location: "속초 더블루테라 호텔 28층 스카이라운지 (카페 더 테라)",
-      price: "250,000원 상당",
-      services: [
-        "호텔 1박 고급 숙박권 기본 무상 지원 (2인 1실 기준)",
-        "28층 스카이 뷰 오션 특별 케이터링 정찬 및 만찬 제공",
-        "아티스트 스페셜 명품 라이브 단독 콘서트",
-        "1:1 프라이빗 팬과의 깊은 대화 및 소통 프로그램",
-        "바다 전망 포토타임 & 미러링 단체 단독 사인회"
-      ],
-      theme: "border-blue-200 bg-blue-50/20"
-    },
-    {
-      stage: "2차 특별 행사",
-      title: "썸머 익스클루시브 웨이브 풀파티",
-      location: "웨이브파크 [현지 사정에 의해 최적지 변동 가능]",
-      price: "180,000원 상당",
-      services: [
-        "풀사이드 오로라 팬덤 전용 VIP석 사전 배정",
-        "시원한 분위기 속 여름 아티스트 스페셜 라이브 뮤직",
-        "아티스트와 마주 보며 즐기는 유쾌한 미니 게임 및 예능 토크",
-        "물놀이 특화 한정 썸머 스페셜 팬 기프트 지급"
-      ],
-      theme: "border-sky-200 bg-sky-50/20"
-    },
-    {
-      stage: "3차 특별 행사",
-      title: "럭셔리 2박 3일 크루즈 스타 팬투어",
-      location: "동해 출발 - 일본 경유 크루즈 대형 연안 여객선",
-      price: "800,000원 상당",
-      services: [
-        "크루즈 2박 3일 선실 및 전 일정 특선 식사/바베큐 풀 코스 제공",
-        "회원 단독 크루즈 대극장 오리엔탈 스페셜 콘서트",
-        "일출을 바라보며 연출하는 아티스트와의 단독 추억 메이킹",
-        "여행상품 50% 할인권 환율 가치 즉시 지원 (여권/비자/유주세 별도)"
-      ],
-      theme: "border-emerald-200 bg-emerald-50/20"
-    },
-    {
-      stage: "4차 특별 행사",
-      title: "2026 오로라 라스크 앙코르 패밀리 콘서트",
-      location: "서울 올림픽공원 내 단독 대관 극장",
-      price: "150,000원 상당",
-      services: [
-        "스테이지 가장 가까운 최고 프리미엄 VIP 석 단독 지정",
-        "피날레 콘서트 한정 스페셜 감사 기프트 세트 제공",
-        "콘서트 미공개 백스테이지 아티스트 비하인드 독점 투어"
-      ],
-      theme: "border-indigo-200 bg-indigo-50/20"
-    }
-  ];
-
   return (
-    <div className="space-y-12">
-      {/* Overview Block */}
-      <motion.div 
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="p-8 md:p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden"
-      >
-        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-blue-100/50 to-indigo-100/30 rounded-bl-full pointer-events-none" />
+    <div className="space-y-12 text-slate-200">
+      
+      {/* 2026 Fandom Aurora Partner Reward Plan - Header Section */}
+      <div className="relative rounded-[2.5rem] overflow-hidden bg-slate-950 border border-amber-500/20 shadow-[0_0_50px_rgba(251,191,36,0.08)] p-8 md:p-12 text-center space-y-6">
+        {/* Subtle Cosmic Background effects */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-40 bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent blur-3xl pointer-events-none" />
+        <div className="absolute top-10 left-10 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl" />
+        <div className="absolute bottom-10 right-10 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl" />
+
+        <div className="space-y-2">
+          {/* Top tagline */}
+          <div className="flex items-center justify-center gap-1 text-xs md:text-sm font-black text-amber-400 tracking-wider">
+            <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+            <span>팬과 함께 성장하고, 보상은 더 크게!</span>
+            <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+          </div>
+
+          {/* Logo & Platform Name */}
+          <div className="flex flex-col items-center gap-0.5 pt-2">
+            <div className="flex items-center gap-2">
+              <Star className="w-7 h-7 text-amber-400 fill-amber-400" />
+              <span className="text-xl md:text-2xl font-black text-white tracking-widest font-mono">FANDOM AURORA</span>
+            </div>
+            <span className="text-xs font-black text-slate-400 tracking-widest uppercase">팬덤 오로라</span>
+          </div>
+        </div>
+
+        {/* Big Golden Main Title */}
+        <div className="max-w-4xl mx-auto space-y-4">
+          <h1 className="text-3xl md:text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-amber-400 to-yellow-100 drop-shadow-[0_2px_10px_rgba(251,191,36,0.3)] leading-tight">
+            2026 팬덤 오로라 파트너 보상플랜
+          </h1>
+          
+          {/* Purple Sub-banner */}
+          <div className="inline-block bg-gradient-to-r from-purple-900/80 via-indigo-950 to-purple-900/80 border border-purple-500/30 px-6 py-2.5 rounded-full shadow-[0_4px_20px_rgba(139,92,246,0.15)]">
+            <span className="text-xs md:text-sm font-black text-amber-300 tracking-wide">
+              ✦ 팬을 연결하고, 추억을 만들고, 수익을 공유하는 최고의 기회! ✦
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Three Columns of Partnership Tiers (left to right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
         
-        <div className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
-            PRODUCT PLAN OVERVIEW
-          </div>
-          <h2 className="text-2xl md:text-3.5xl font-black text-slate-900 tracking-tight">
-            팬덤 오로라(Fandom Aurora) 2026 한정판 멤버십
-          </h2>
-          <p className="text-slate-500 text-sm md:text-base leading-relaxed font-semibold">
-            팬과 아티스트가 단순히 먼 발치에서 바라보는 관람 관계를 과감히 넘어섭니다. 생생한 특별 추억을 함께 건설하고 교감하며, 상생과 평생 소장의 기쁨을 공유하는 프리미엄 체험형 팬덤 비즈니스를 대한민국에 첫 선보입니다.
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-            <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100">
-              <span className="text-[10px] font-black text-slate-400 block uppercase">정규 멤버십 가격</span>
-              <span className="text-lg font-black text-slate-900">500,000원 <span className="text-xs text-slate-400 font-medium">(VAT 별도)</span></span>
+        {/* Column 1: 팬덤 크리에이터 (전문 마케터) */}
+        <motion.div
+          whileHover={{ y: -6 }}
+          transition={{ duration: 0.3 }}
+          className="rounded-[2.2rem] bg-slate-950 border border-blue-500/30 shadow-[0_4px_30px_rgba(59,130,246,0.05)] flex flex-col justify-between overflow-hidden"
+        >
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-950 to-slate-900 border-b border-blue-500/20 p-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex flex-col items-center justify-center text-slate-950 font-black shadow-lg shadow-blue-500/20 shrink-0">
+              <UserCheck className="w-6 h-6 text-slate-950" />
+              <span className="text-[9px] -mt-1">01</span>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100">
-              <span className="text-[10px] font-black text-slate-400 block uppercase">가입 자격 조건</span>
-              <span className="text-lg font-black text-blue-600">제한 없음 <span className="text-xs text-slate-400 font-medium">(스타 팬 누구나)</span></span>
-            </div>
-            <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100">
-              <span className="text-[10px] font-black text-slate-400 block uppercase">시범 연도 운영 기간</span>
-              <span className="text-lg font-black text-amber-600">2026 년 한정판</span>
+            <div>
+              <h3 className="text-lg font-black text-white tracking-tight">팬덤 크리에이터 <span className="text-xs font-bold text-blue-400">(전문 마케터)</span></h3>
+              <p className="text-[10.5px] font-bold text-slate-400 mt-0.5">팬과 연결하고, 수익을 만드는 첫걸음!</p>
             </div>
           </div>
-        </div>
-      </motion.div>
 
-      {/* Provided Products */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {products.map((p, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -4 }}
-            className="p-8 bg-white border border-slate-150 rounded-[2rem] shadow-lg hover:shadow-2xl hover:border-slate-300 transition-all space-y-6 flex flex-col justify-between"
-          >
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 shadow-inner">
-                  {p.icon}
-                </div>
-                <div>
-                  <h3 className="text-lg font-black text-slate-800 tracking-tight">{p.title}</h3>
-                  <span className="text-[10px] text-slate-400 font-black tracking-wide uppercase block">{p.subtitle}</span>
-                </div>
+          {/* Body Content */}
+          <div className="p-6 md:p-8 space-y-6 flex-grow">
+            {/* Left Parameters List */}
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 bg-slate-900/60 p-3 rounded-xl border border-blue-500/5">
+                <div className="text-blue-400 font-extrabold text-xs mt-0.5 shrink-0">📌 가입 조건</div>
+                <div className="text-xs text-slate-300 font-bold">멤버십 6개 선구매 <span className="text-blue-400 font-black">(330만원)</span></div>
               </div>
-              <div className="h-px bg-slate-100" />
-              <ul className="space-y-3">
-                {p.highlights.map((h, hIdx) => (
-                  <li key={hIdx} className="flex items-center gap-2 text-xs font-bold text-slate-600">
-                    <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400 shrink-0" />
-                    <span>{h}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="flex items-start gap-3 bg-slate-900/60 p-3 rounded-xl border border-blue-500/5">
+                <div className="text-blue-400 font-extrabold text-xs mt-0.5 shrink-0">🤝 활동 지원</div>
+                <div className="text-xs text-slate-300 font-bold">월 150만원 × 3개월 <span className="text-blue-400 font-black">(총 450만원)</span></div>
+              </div>
+              <div className="flex items-start gap-3 bg-slate-900/60 p-3 rounded-xl border border-blue-500/5">
+                <div className="text-blue-400 font-extrabold text-xs mt-0.5 shrink-0">⚡ 주요 활동</div>
+                <div className="text-xs text-slate-300 font-semibold leading-relaxed">회원 모집, SNS 홍보, 커뮤니티 운영, 행사 홍보, 룬맨츠 공유</div>
+              </div>
+              <div className="flex items-start gap-3 bg-slate-900/60 p-3 rounded-xl border border-blue-500/5">
+                <div className="text-blue-400 font-extrabold text-xs mt-0.5 shrink-0">📦 상품 반환</div>
+                <div className="text-xs text-slate-300 font-bold">미판매 상품 <span className="text-red-400 font-black">90% 환급</span> (퇴사 시)</div>
+              </div>
             </div>
-            <div className="pt-4 mt-4 border-t border-slate-100">
-              <span className="text-[10px] text-blue-600 bg-blue-50/50 px-2.5 py-1 rounded-md font-black border border-blue-100 block text-center">
-                ⚙️ {p.comment}
-              </span>
+
+            {/* Right Reward Box (Integrated inside the card body) */}
+            <div className="rounded-2xl border border-blue-500/20 bg-gradient-to-b from-blue-950/40 to-slate-950 p-4 text-center space-y-1">
+              <span className="text-[10px] font-black tracking-wider text-blue-400 uppercase bg-blue-500/10 px-2.5 py-0.5 rounded-full">팬덤 리워드</span>
+              <div className="text-xs text-slate-300 font-extrabold pt-1">회원 1명 가입 시 상품 판매가의</div>
+              <div className="text-3xl font-black text-amber-400 font-mono tracking-tight my-1">20%</div>
+              <div className="text-[10px] text-slate-400 font-bold border-t border-slate-900 pt-1.5 mt-1">지급 기간: 3개월 누적 지급</div>
             </div>
-          </motion.div>
-        ))}
-      </div>
 
-      {/* Premium Exclusive Events */}
-      <div className="space-y-6">
-        <div className="text-center space-y-1">
-          <span className="text-[10px] font-black text-blue-600 tracking-widest uppercase">Premium Membership Season Schedule</span>
-          <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">연간 총 4회 제공 아티스트 오프라인 투어 서비스</h3>
-          <p className="text-slate-400 text-xs font-semibold">각 시즌별로 최고의 테마와 가치 가중 설계가 적용된 오로라 독점 만찬회</p>
-        </div>
+            {/* Bottom Special Block 1: 크리에이터 스타트 지원금 */}
+            <div className="p-4 bg-gradient-to-r from-slate-900 to-blue-950/30 rounded-2xl border border-blue-500/10 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-amber-400/10 flex items-center justify-center text-amber-400">
+                  <Coins className="w-4 h-4 text-amber-400" />
+                </div>
+                <span className="text-xs font-black text-white">크리에이터 스타트 지원금</span>
+              </div>
+              <div className="flex justify-between items-baseline">
+                <div className="text-sm font-black text-blue-400">월 150만원 <span className="text-[10px] text-slate-400 font-bold">(3개월 총 450만원 지원)</span></div>
+                <span className="text-[9px] font-black bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded">1회성 보너스</span>
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {events.map((ev, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.01 }}
-              className={`p-6 rounded-[2rem] border shadow-md flex flex-col justify-between gap-5 transition-all ${ev.theme}`}
-            >
-              <div className="space-y-4">
-                <div className="flex justify-between items-start gap-2">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] font-black text-blue-600 tracking-widest uppercase block">{ev.stage}</span>
-                    <h4 className="font-black text-slate-800 text-base leading-tight">{ev.title}</h4>
+            {/* Bottom Special Block 2: 파트너 추천 보상 */}
+            <div className="p-4 bg-gradient-to-r from-slate-900 to-purple-950/20 rounded-2xl border border-purple-500/10 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded bg-purple-500/10">추천 보상</span>
+                  <span className="text-xs font-black text-white">파트너 추천 보너스</span>
+                </div>
+                <span className="text-[9px] font-black bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">1회성 보너스</span>
+              </div>
+              <div className="text-xs text-slate-400 font-bold">
+                신규 지역 파트너 추천 시 <strong className="text-amber-400 text-sm font-black">250만원</strong> 지급
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Column 2: 지역 파트너 라운지 (대리점) */}
+        <motion.div
+          whileHover={{ y: -6 }}
+          transition={{ duration: 0.3 }}
+          className="rounded-[2.2rem] bg-slate-950 border border-emerald-500/30 shadow-[0_4px_30px_rgba(16,185,129,0.05)] flex flex-col justify-between overflow-hidden"
+        >
+          {/* Header */}
+          <div className="bg-gradient-to-r from-emerald-950 to-slate-900 border-b border-emerald-500/20 p-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex flex-col items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20 shrink-0">
+              <Building className="w-6 h-6 text-slate-950" />
+              <span className="text-[9px] -mt-1">02</span>
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-white tracking-tight">지역 파트너 라운지 <span className="text-xs font-bold text-emerald-400">(대리점)</span></h3>
+              <p className="text-[10.5px] font-bold text-slate-400 mt-0.5">지역에서 팬덤 비즈니스를 이끄는 핵심 파트너!</p>
+            </div>
+          </div>
+
+          {/* Body Content */}
+          <div className="p-6 md:p-8 space-y-6 flex-grow">
+            {/* Left Parameters List */}
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 bg-slate-900/60 p-3 rounded-xl border border-emerald-500/5">
+                <div className="text-emerald-400 font-extrabold text-xs mt-0.5 shrink-0">📌 가입 조건</div>
+                <div className="text-xs text-slate-300 font-bold">지역 파트너 라이선스 <span className="text-emerald-400 font-black">1,000만원</span> (상품 18개 제공)</div>
+              </div>
+              <div className="flex items-start gap-3 bg-slate-900/60 p-3 rounded-xl border border-emerald-500/5">
+                <div className="text-emerald-400 font-extrabold text-xs mt-0.5 shrink-0">⚡ 주요 역할</div>
+                <div className="text-xs text-slate-300 font-semibold leading-relaxed">지역 회원 관리, 팬덤 행사 지원, 팬 커뮤니티 운영, 팬 크리에이터 육성</div>
+              </div>
+              <div className="flex items-start gap-3 bg-slate-900/60 p-3 rounded-xl border border-emerald-500/5">
+                <div className="text-emerald-400 font-extrabold text-xs mt-0.5 shrink-0">🎁 지원 혜택</div>
+                <div className="text-xs text-slate-300 font-bold">파트너 라운지 운영 보조금 <span className="text-emerald-400 font-black">매월 250만원</span> 지급</div>
+              </div>
+            </div>
+
+            {/* Right Reward Box (Integrated inside the card body) */}
+            <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-950/40 to-slate-950 p-4 text-center space-y-1">
+              <span className="text-[10px] font-black tracking-wider text-emerald-400 uppercase bg-emerald-500/10 px-2.5 py-0.5 rounded-full">지역 운영 리워드</span>
+              <div className="text-xs text-slate-300 font-extrabold pt-1">총 매출의</div>
+              <div className="text-3xl font-black text-amber-400 font-mono tracking-tight my-1">10%</div>
+              <div className="text-[10px] text-slate-400 font-bold border-t border-slate-900 pt-1.5 mt-1">지급 기간: 3개월 누적 지급</div>
+            </div>
+
+            {/* Bottom Special Block 1: 파트너 확장 보너스 */}
+            <div className="p-4 bg-gradient-to-r from-slate-900 to-emerald-950/30 rounded-2xl border border-emerald-500/10 space-y-2">
+              <div className="flex items-center gap-2 justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-400/10 flex items-center justify-center text-emerald-400">
+                    <Handshake className="w-4 h-4 text-emerald-400" />
                   </div>
-                  <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full whitespace-nowrap">
-                    {ev.price}
-                  </span>
+                  <span className="text-xs font-black text-white">파트너 확장 보너스</span>
                 </div>
-                
-                <div className="flex items-center gap-1.5 text-xs text-slate-500 font-bold bg-white/70 py-1.5 px-3 rounded-xl border border-slate-100">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span className="truncate">{ev.location}</span>
-                </div>
-
-                <div className="space-y-2 pt-2">
-                  {ev.services.map((srv, sIdx) => (
-                    <div key={sIdx} className="flex items-start gap-2 text-xs font-medium text-slate-600">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 mt-1.5" />
-                      <span className="leading-tight">{srv}</span>
-                    </div>
-                  ))}
-                </div>
+                <span className="text-[9px] font-black bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded">1회성 보너스</span>
               </div>
-            </motion.div>
-          ))}
-        </div>
+              <div className="text-xs text-slate-400 font-bold">
+                신규 지역 파트너 추천 시 <strong className="text-amber-400 text-sm font-black">350만원</strong> 지원
+              </div>
+            </div>
+
+            {/* Bottom Special Block 2: 추천 파트너 매출 감사 보너스 */}
+            <div className="p-4 bg-gradient-to-r from-slate-900 to-amber-950/20 rounded-2xl border border-amber-500/10 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-amber-400/10 flex items-center justify-center text-amber-400">
+                  <Coins className="w-4 h-4 text-amber-400" />
+                </div>
+                <span className="text-xs font-black text-white">추천 파트너 매출 감사 보너스</span>
+              </div>
+              <div className="text-xs text-slate-400 font-bold">
+                추천한 파트너의 매출 중 <strong className="text-amber-400 text-sm font-black">1%</strong> <span className="text-emerald-400 font-bold">지속 지급</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Column 3: 광역 파트너센터 (지사) */}
+        <motion.div
+          whileHover={{ y: -6 }}
+          transition={{ duration: 0.3 }}
+          className="rounded-[2.2rem] bg-slate-950 border border-purple-500/30 shadow-[0_4px_30px_rgba(139,92,246,0.05)] flex flex-col justify-between overflow-hidden"
+        >
+          {/* Header */}
+          <div className="bg-gradient-to-r from-purple-950 to-slate-900 border-b border-purple-500/20 p-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex flex-col items-center justify-center text-slate-950 font-black shadow-lg shadow-purple-500/20 shrink-0">
+              <Building className="w-6 h-6 text-slate-950" />
+              <span className="text-[9px] -mt-1">03</span>
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-white tracking-tight">광역 파트너센터 <span className="text-xs font-bold text-purple-400">(지사)</span></h3>
+              <p className="text-[10.5px] font-bold text-slate-400 mt-0.5">더 큰 규모로 네트워크를 확장하는 리더!</p>
+            </div>
+          </div>
+
+          {/* Body Content */}
+          <div className="p-6 md:p-8 space-y-6 flex-grow">
+            {/* Left Parameters List */}
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 bg-slate-900/60 p-3 rounded-xl border border-purple-500/5">
+                <div className="text-purple-400 font-extrabold text-xs mt-0.5 shrink-0">📌 가입 조건</div>
+                <div className="text-xs text-slate-300 font-bold leading-relaxed">사무실 50평 이상 운영 가능자, 광역 본부장 허가 득한 자</div>
+              </div>
+              <div className="flex items-start gap-3 bg-slate-900/60 p-3 rounded-xl border border-purple-500/5">
+                <div className="text-purple-400 font-extrabold text-xs mt-0.5 shrink-0">⚡ 주요 역할</div>
+                <div className="text-xs text-slate-300 font-semibold leading-relaxed">지역 파트너 관리, 교육, 행사 운영 지원, 성과 관리</div>
+              </div>
+              <div className="flex items-start gap-3 bg-slate-900/60 p-3 rounded-xl border border-purple-500/5">
+                <div className="text-purple-400 font-extrabold text-xs mt-0.5 shrink-0">🎁 지원 혜택</div>
+                <div className="text-xs text-slate-300 font-bold">파트너 센터 사무실 <span className="text-purple-400 font-black">월 임대료 50% 지원</span></div>
+              </div>
+            </div>
+
+            {/* Right Reward Box (Integrated inside the card body) */}
+            <div className="rounded-2xl border border-purple-500/20 bg-gradient-to-b from-purple-950/40 to-slate-950 p-4 text-center space-y-1">
+              <span className="text-[10px] font-black tracking-wider text-purple-400 uppercase bg-purple-500/10 px-2.5 py-0.5 rounded-full">광역 운영 리워드</span>
+              <div className="text-xs text-slate-300 font-extrabold pt-1">관리 매출의</div>
+              <div className="text-3xl font-black text-amber-400 font-mono tracking-tight my-1">5%</div>
+              <div className="text-[10px] text-slate-400 font-bold border-t border-slate-900 pt-1.5 mt-1">지급 기간: 3개월 누적 지급</div>
+            </div>
+
+            {/* Bottom Special Block 1: 추천 파트너 라운지 운영지원금 */}
+            <div className="p-4 bg-gradient-to-r from-slate-900 to-purple-950/30 rounded-2xl border border-purple-500/10 space-y-2">
+              <div className="flex items-center gap-2 justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-purple-400/10 flex items-center justify-center text-purple-400">
+                    <Coins className="w-4 h-4 text-purple-400" />
+                  </div>
+                  <span className="text-xs font-black text-white">추천 파트너 라운지 운영지원금</span>
+                </div>
+                <span className="text-[9px] font-black bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">1회성 보너스</span>
+              </div>
+              <div className="text-xs text-slate-400 font-bold">
+                지원 명목 정액 <strong className="text-amber-400 text-sm font-black">400만원</strong> 지급
+              </div>
+            </div>
+
+            {/* Bottom Spacer/Placeholder to match lengths */}
+            <div className="p-4 bg-slate-900/20 rounded-2xl border border-dashed border-slate-800/60 flex items-center justify-center text-slate-600 text-[10px] h-[72px]">
+              최상위 리더 전용 특별 엑스트라 프로모션 적용 대기
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Attendance Protection Policy */}
+      {/* Horizontal Section: 추천 보상 한눈에 보기! (Recommendation Rewards at a Glance) */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="p-8 rounded-[2rem] bg-gradient-to-r from-amber-50 via-amber-100/30 to-slate-50 border border-amber-200 shadow-md space-y-4 relative overflow-hidden"
+        className="p-6 md:p-8 bg-slate-950 border border-amber-500/20 rounded-[2rem] space-y-6"
       >
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-amber-500/5 rotate-12 blur-3xl pointer-events-none" />
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-amber-500 text-white rounded-xl">
-            <ShieldCheck className="w-5 h-5" />
+        <div className="flex items-center gap-2.5 border-b border-slate-900 pb-4">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 font-black">
+            ✦
           </div>
           <div>
-            <h4 className="font-black text-slate-800 text-base">국내 최초, 미참석 자동 보상 제도 (Attendance Compensation)</h4>
-            <span className="text-[10px] text-amber-700 font-black uppercase tracking-wider block">Membership Value Safety Net</span>
+            <h3 className="text-lg font-black text-white">추천 보상 한눈에 보기!</h3>
+            <p className="text-[10px] text-slate-400 font-bold">지역 파트너 추천 개설 및 크리에이터 추천에 따른 풍성한 정액 보너스 합산</p>
           </div>
         </div>
-        <p className="text-xs text-slate-600 leading-relaxed font-bold">
-          회원이 개인 업무 소홀 방지 또는 건강 상의 부득이한 지위 불참으로 시즌 행사에 직접 참석하지 못할 경우에도, 그 가치를 완전하게 환원해 드립니다.
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Box 1 */}
+          <div className="bg-slate-900/60 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-4">
+            <div className="space-y-1">
+              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest block">대리점 추천</span>
+              <h4 className="text-xs font-black text-slate-300">추천 대리점 + 광역 파트너센터(지사)</h4>
+            </div>
+            
+            <div className="flex items-center gap-2 justify-center py-2">
+              <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-400 text-xs font-bold">대리점 350만</div>
+              <span className="text-slate-500 font-bold">+</span>
+              <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 text-xs font-bold">지사 50만</div>
+            </div>
+
+            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 text-center">
+              <span className="text-[10px] text-slate-400 block font-bold">총 지급액</span>
+              <span className="text-base font-black text-emerald-400">총 400만원 <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-black">1회성</span></span>
+            </div>
+          </div>
+
+          {/* Box 2 */}
+          <div className="bg-slate-900/60 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-4">
+            <div className="space-y-1">
+              <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest block">크리에이터 추천</span>
+              <h4 className="text-xs font-black text-slate-300">크리에이터 + 대리점 + 광역 파트너센터(지사)</h4>
+            </div>
+            
+            <div className="flex items-center gap-1.5 justify-center py-2 text-[10px]">
+              <div className="p-1.5 bg-blue-500/10 rounded-lg text-blue-400 font-bold">크리에이터 250만</div>
+              <span className="text-slate-500 font-bold">+</span>
+              <div className="p-1.5 bg-emerald-500/10 rounded-lg text-emerald-400 font-bold">대리점 100만</div>
+              <span className="text-slate-500 font-bold">+</span>
+              <div className="p-1.5 bg-purple-500/10 rounded-lg text-purple-400 font-bold">지사 50만</div>
+            </div>
+
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 text-center">
+              <span className="text-[10px] text-slate-400 block font-bold">총 지급액</span>
+              <span className="text-base font-black text-blue-400">총 400만원 <span className="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-black">1회성</span></span>
+            </div>
+          </div>
+
+          {/* Box 3 */}
+          <div className="bg-slate-900/60 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-4 text-center">
+            <div className="space-y-1 text-left">
+              <span className="text-[10px] font-black text-purple-400 uppercase tracking-widest block">추천 대리점 개설 시 추가 보상</span>
+              <h4 className="text-xs font-black text-slate-300">추천된 대리점이 최종 개설될 경우</h4>
+            </div>
+            
+            <div className="flex flex-col items-center justify-center py-2 space-y-1">
+              <Users className="w-8 h-8 text-amber-400" />
+              <span className="text-[10px] text-slate-400 font-semibold">소속 대리점 연대 혜택</span>
+            </div>
+
+            <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-3">
+              <span className="text-[10px] text-slate-400 block font-bold">소속 대리점 보상</span>
+              <span className="text-base font-black text-purple-400">100만원 지급</span>
+            </div>
+          </div>
+
+        </div>
+      </motion.div>
+
+      {/* Bottom Grid/Table: 수익 구조 요약 (Revenue Structure Summary) & Additional Benefits */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        
+        {/* Table layout left */}
+        <motion.div
+          initial={{ opacity: 0, x: -15 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="lg:col-span-8 bg-slate-950 border border-slate-800 rounded-[2rem] p-6 space-y-5"
+        >
+          <div className="flex items-center gap-2 border-b border-slate-900 pb-3">
+            <div className="w-2.5 h-6 bg-amber-500 rounded" />
+            <h3 className="text-sm font-black text-white">수익 구조 요약 (Revenue Structure Table)</h3>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-slate-300 font-bold">
+              <thead>
+                <tr className="bg-slate-900 text-slate-400 border-b border-slate-850">
+                  <th className="p-3 font-black text-[10px] uppercase">구분</th>
+                  <th className="p-3 font-black text-[10px] uppercase">보상 명칭</th>
+                  <th className="p-3 font-black text-[10px] uppercase">지급 기준</th>
+                  <th className="p-3 font-black text-[10px] uppercase">지급률 / 금액</th>
+                  <th className="p-3 font-black text-[10px] uppercase">지급 기간</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-900">
+                <tr className="hover:bg-slate-900/40 transition-colors">
+                  <td className="p-3 font-black text-blue-400">01 팬덤 크리에이터</td>
+                  <td className="p-3">팬덤 리워드</td>
+                  <td className="p-3 text-slate-400 font-medium">회원 1명 가입 시</td>
+                  <td className="p-3 text-amber-400 font-black">판매가의 20%</td>
+                  <td className="p-3 text-slate-500 font-semibold">3개월 누적 지급</td>
+                </tr>
+                <tr className="hover:bg-slate-900/40 transition-colors">
+                  <td className="p-3 font-black text-emerald-400">02 지역 파트너 라운지</td>
+                  <td className="p-3">지역 운영 리워드</td>
+                  <td className="p-3 text-slate-400 font-medium">총 매출 기준</td>
+                  <td className="p-3 text-amber-400 font-black">10%</td>
+                  <td className="p-3 text-slate-500 font-semibold">3개월 누적 지급</td>
+                </tr>
+                <tr className="hover:bg-slate-900/40 transition-colors">
+                  <td className="p-3 font-black text-purple-400">03 광역 파트너센터</td>
+                  <td className="p-3">광역 운영 리워드</td>
+                  <td className="p-3 text-slate-400 font-medium">관리 매출 기준</td>
+                  <td className="p-3 text-amber-400 font-black">5%</td>
+                  <td className="p-3 text-slate-500 font-semibold">3개월 누적 지급</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Additional details row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3">
+            <div className="p-4 bg-slate-900 rounded-2xl border border-slate-850 flex items-center gap-3">
+              <Coins className="w-5 h-5 text-amber-400 shrink-0" />
+              <div>
+                <span className="text-[10px] text-slate-500 block">크리에이터 스타트 지원금</span>
+                <span className="text-xs font-bold text-slate-200">월 150만원 × 3개월 = <strong className="text-blue-400">총 450만원 지원!</strong></span>
+                <span className="text-[9px] text-slate-500 block mt-0.5">※ 가입 후 활동 조건 충족 시 지급</span>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-900 rounded-2xl border border-slate-850 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 shrink-0">
+                📦
+              </div>
+              <div>
+                <span className="text-[10px] text-slate-500 block">상품 반환 혜택 (Safety Refund)</span>
+                <span className="text-xs font-bold text-slate-200">퇴사 시 미판매 상품 <strong className="text-red-400">90% 즉시 환급</strong></span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Bullet points right */}
+        <motion.div
+          initial={{ opacity: 0, x: 15 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="lg:col-span-4 bg-slate-950 border border-slate-800 rounded-[2rem] p-6 space-y-4 flex flex-col justify-between"
+        >
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-900 pb-3">
+              <div className="w-2.5 h-6 bg-purple-500 rounded" />
+              <h3 className="text-sm font-black text-white">팬덤 오로라 파트너 혜택</h3>
+            </div>
+
+            <ul className="space-y-3">
+              <li className="flex items-center gap-2.5 text-xs text-slate-300 font-bold bg-slate-900/50 p-2.5 rounded-xl border border-slate-850">
+                <span className="text-base shrink-0">🎤</span>
+                <span>연예인 팬미팅 참여 기회</span>
+              </li>
+              <li className="flex items-center gap-2.5 text-xs text-slate-300 font-bold bg-slate-900/50 p-2.5 rounded-xl border border-slate-850">
+                <span className="text-base shrink-0">🎫</span>
+                <span>공연 VIP 초청</span>
+              </li>
+              <li className="flex items-center gap-2.5 text-xs text-slate-300 font-bold bg-slate-900/50 p-2.5 rounded-xl border border-slate-850">
+                <span className="text-base shrink-0">🥂</span>
+                <span>팬파티 초청</span>
+              </li>
+              <li className="flex items-center gap-2.5 text-xs text-slate-300 font-bold bg-slate-900/50 p-2.5 rounded-xl border border-slate-850">
+                <span className="text-base shrink-0">⛵</span>
+                <span>크루즈 팬여행 참여 기회</span>
+              </li>
+              <li className="flex items-center gap-2.5 text-xs text-slate-300 font-bold bg-slate-900/50 p-2.5 rounded-xl border border-slate-850">
+                <span className="text-base shrink-0">🎁</span>
+                <span>우수 파트너 특별 포상</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="p-3 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-xl border border-amber-500/20 text-center text-[10px] text-amber-400 font-black tracking-wide">
+            🏆 ALL SEASON PASS UNLOCKED
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Footer Banner */}
+      <div className="text-center py-6 space-y-4 border-t border-slate-900">
+        <p className="text-sm md:text-lg font-black tracking-tight text-amber-300 font-serif italic">
+          &quot;좋아하는 아티스트와 함께! 즐거운 추억도 만들고, 수익도 만드는 특별한 기회!&quot;
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold text-slate-700 pt-2">
-          <div className="p-4 bg-white/80 rounded-xl border border-amber-100 flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
-            <span>행사 미참석 시 회당 <strong className="text-slate-900 border-b-2 border-amber-300 pb-0.5">100,000원 상당</strong> 리워드 환급 지원</span>
-          </div>
-          <div className="p-4 bg-white/80 rounded-xl border border-amber-100 flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
-            <span>또는 미참석 행사 대비 <strong className="text-indigo-600 font-black">한정판 골드 기프트 패키지</strong> 개별 우편 배송 수령</span>
-          </div>
-        </div>
-        <div className="pt-2">
-          <span className="text-[10px] font-black text-slate-400">
-            * 4회 연말 올 시즌 불참 처리 시, 최대 300,000원 정액 지원 혜택을 전면적으로 보충 보장합니다.
-          </span>
-        </div>
-      </motion.div>
+        <button className="px-8 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-slate-950 font-black rounded-full text-xs md:text-sm tracking-widest uppercase hover:scale-105 transition-all shadow-lg shadow-amber-500/10 border border-amber-300/30">
+          지금 바로 도전하세요! ✦
+        </button>
+      </div>
 
-      {/* Cost-Benefit Value Analysis */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="p-8 bg-white border border-slate-150 rounded-[2.5rem] shadow-xl space-y-6"
-      >
-        <div className="space-y-1">
-          <span className="text-[10px] font-black text-blue-600 tracking-widest block uppercase">Economic Benefits Modeling</span>
-          <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">수혜자 중심 혜택 가치 명세표</h3>
-          <p className="text-slate-400 text-xs font-bold font-sans">회원 실가입 비 대비 체감하는 오토매틱 실효 혜택 정합 분석</p>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-sans">
-                <th className="p-4 rounded-l-xl font-black">대항목 구분</th>
-                <th className="p-4 font-black">제공 가치 (일반 판매 환산가)</th>
-                <th className="p-4 rounded-r-xl font-black">상세 구성 내역 요약</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50 font-bold text-slate-700">
-              <tr>
-                <td className="p-4 font-black text-slate-900">1차: 오션뷰 팬미팅</td>
-                <td className="p-4 text-blue-600">250,000원</td>
-                <td className="p-4 text-slate-500">호텔 1박 룸 지원, 정통 케이터링, 대화 소통, 사인회</td>
-              </tr>
-              <tr>
-                <td className="p-4 font-black text-slate-900">2차: 썸머 풀파티</td>
-                <td className="p-4 text-blue-600">180,000원</td>
-                <td className="p-4 text-slate-500">풀사이드 스페셜 보장석, 워터 한정판 사은품 배포</td>
-              </tr>
-              <tr>
-                <td className="p-4 font-black text-slate-900">3차: 크루즈 일본여행 혜택</td>
-                <td className="p-4 text-blue-600">400,000원</td>
-                <td className="p-4 text-slate-500">크루즈 전일정 숙식 풀바비큐 패키지 및 50% 지분 지원</td>
-              </tr>
-              <tr>
-                <td className="p-4 font-black text-slate-900">4차: 라스트 콘서트 VIP석</td>
-                <td className="p-4 text-blue-600">150,000원</td>
-                <td className="p-4 text-slate-500">서울 대극장 최고 근접석, 백스테이지 가이드 패스</td>
-              </tr>
-              <tr>
-                <td className="p-4 font-black text-slate-900">실물: 팬덤 프리패스 가죽 카드</td>
-                <td className="p-4 text-blue-600">100,000원</td>
-                <td className="p-4 text-slate-500">레이저 커스텀 이니셜 공정, 실물 기프트 세트 보존</td>
-              </tr>
-              <tr>
-                <td className="p-4 font-black text-slate-900">실물: 순금 초상 기념금화</td>
-                <td className="p-4 text-blue-600">100,000원</td>
-                <td className="p-4 text-slate-500">일련번호 보증, 고급 원목/아크릴 방진 스탠드 마감</td>
-              </tr>
-              <tr className="bg-blue-50/50">
-                <td className="p-4 rounded-l-xl font-black text-blue-800">총 혜택 가치 총량</td>
-                <td className="p-4 text-blue-700 text-base font-black">1,180,000원</td>
-                <td className="p-4 rounded-r-xl text-blue-700 font-extrabold text-xs">
-                  실가입비 약 50만원 대비 누적 2.3배 이상 명백한 수익률 보장
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </motion.div>
     </div>
   );
 }
+

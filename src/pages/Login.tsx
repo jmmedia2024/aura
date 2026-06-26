@@ -51,7 +51,11 @@ export default function Login() {
       navigate('/');
     } catch (err: any) {
       console.error(err);
-      setError('아이디 또는 비밀번호가 올바르지 않습니다.');
+      if (err.message && err.message.includes('Email not confirmed')) {
+        setError('이메일 인증이 완료되지 않았습니다. 가입하신 이메일의 메일함을 확인해주세요.');
+      } else {
+        setError('아이디 또는 비밀번호가 올바르지 않습니다.');
+      }
     } finally {
       setLoading(false);
     }
