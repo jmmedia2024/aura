@@ -8,7 +8,7 @@
   ],
   "hyperdrive": [
     {
-      "binding": "HYPERDRIVE",
+      "binding": "fandomaurora",
       "id": "YOUR_HYPERDRIVE_ID",
       "localConnectionString": "postgres://localhost:5432/postgres"
     }

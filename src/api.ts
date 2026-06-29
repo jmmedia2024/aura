@@ -10,7 +10,7 @@ import { desc, sql } from 'drizzle-orm';
 
 type Env = {
   Bindings: {
-    HYPERDRIVE: {
+    fandomaurora: {
       connectionString: string;
     };
   };
@@ -23,9 +23,8 @@ const app = new Hono<Env>().basePath('/api');
 
 // Middleware to inject Hyperdrive db connection for Cloudflare Workers
 app.use('*', async (c, next) => {
-  if (c.env?.HYPERDRIVE?.connectionString) {
-    const { db: workerDb, client } = createWorkerDb(c.env.HYPERDRIVE.connectionString);
-    await client.connect();
+  if (c.env?.fandomaurora?.connectionString) {
+    const { db: workerDb, client } = createWorkerDb(c.env.fandomaurora.connectionString);
     
     return dbContext.run({ db: workerDb, client }, async () => {
       try {
