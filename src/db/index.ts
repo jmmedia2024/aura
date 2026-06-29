@@ -8,6 +8,6 @@ const database = process.env.DB_NAME || 'postgres';
 const user = process.env.DB_USER || 'pscale_api_jvlki5oab3y5.9k0005vtdxb5';
 const password = process.env.DB_PASSWORD;
 
-const connectionString = process.env.DATABASE_URL || `postgres://${user}:${password}@${host}:${port}/${database}?sslmode=require`;
+const connectionString = process.env.DATABASE_URL || `postgres://localhost:5432/postgres`;
 const client = postgres(connectionString);
 export const db = drizzle(client, { schema });

@@ -37,6 +37,8 @@ export const card_designs = pgTable("card_designs", {
   tier: text("tier").notNull(),
   image_url: text("image_url").notNull(),
   features: text("features").array(),
+  accent_color: text("accent_color").default("Gold"),
+  text_color: text("text_color").default("#ffffff"),
   created_at: timestamp("created_at").defaultNow(),
 });
 

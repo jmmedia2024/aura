@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
-import { supabase } from '../lib/supabase';
 import { 
   Sparkles, 
   Check, 
@@ -46,7 +45,7 @@ const PRESET_FANS = [
 ];
 
 export default function Apply() {
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading, getToken } = useAuth();
   const navigate = useNavigate();
 
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -61,20 +60,28 @@ export default function Apply() {
     setErrorMessage('');
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
+      const token = await getToken();
+      const response = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
           selected_fan_id: fanId,
           selected_fan_name: name,
           selected_fan_photo_url: imageUrl,
           selected_fan_updated_at: new Date().toISOString()
         })
-        .eq('id', user.id);
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
 
       // Simulate subtle feedback duration
       await new Promise(resolve => setTimeout(resolve, 800));
+      window.location.reload(); // Refresh to get updated profile from context
     } catch (err: any) {
       console.error("Error updating selected fan: ", err);
       setErrorMessage('최애 팬 선택 저장에 실패했습니다: ' + err.message);

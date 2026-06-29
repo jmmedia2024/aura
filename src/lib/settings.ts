@@ -1,5 +1,5 @@
-import { supabase } from './supabase';
 import { Star, Music, Ship, Sparkles, Coins, CreditCard } from 'lucide-react';
+import { supabase } from './supabase'; // Keep if used elsewhere or remove if not needed, but we don't need it here.
 
 export const ICON_MAP: Record<string, any> = {
   Star,
@@ -75,19 +75,15 @@ export const DEFAULT_SETTINGS = {
 
 export async function getSettings() {
   try {
-    const { data, error } = await supabase
-      .from('settings')
-      .select('data')
-      .eq('id', 'landing')
-      .single();
-
-    if (error) {
-      if (error.code !== 'PGRST116') {
-        console.error("Error fetching settings from Supabase:", error);
-      }
-      return DEFAULT_SETTINGS;
+    const response = await fetch('/api/settings');
+    if (!response.ok) {
+      throw new Error('Failed to fetch settings from API');
     }
-    return data.data;
+    const data = await response.json();
+    if (data && data.landing) {
+      return data.landing;
+    }
+    return DEFAULT_SETTINGS;
   } catch (error) {
     console.error("Error fetching settings:", error);
     return DEFAULT_SETTINGS;
@@ -95,9 +91,20 @@ export async function getSettings() {
 }
 
 export async function saveSettings(settings: any) {
-  const { error } = await supabase
-    .from('settings')
-    .upsert({ id: 'landing', data: settings });
+  const { supabase } = await import('./supabase');
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
   
-  if (error) throw error;
+  const response = await fetch('/api/settings', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ key: 'landing', value: settings })
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to save settings');
+  }
 }

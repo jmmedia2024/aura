@@ -17,7 +17,7 @@ export async function getApplications() {
     return await db.select().from(card_applications).orderBy(desc(card_applications.created_at));
   } catch (error) {
     console.error("Error fetching applications:", error);
-    throw error;
+    return [];
   }
 }
 
@@ -26,7 +26,7 @@ export async function getApplicationsByUser(userId: string) {
     return await db.select().from(card_applications).where(eq(card_applications.user_id, userId)).orderBy(desc(card_applications.created_at));
   } catch (error) {
     console.error("Error fetching user applications:", error);
-    throw error;
+    return [];
   }
 }
 

@@ -20,7 +20,6 @@ export async function getAllSettings() {
       return acc;
     }, {});
   } catch (error) {
-    console.error("Error fetching all settings:", error);
     return {};
   }
 }

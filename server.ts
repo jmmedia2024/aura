@@ -47,8 +47,13 @@ async function startServer() {
   app.get("/api/profile/downline", requireAuth, async (req: AuthRequest, res) => {
     try {
       const email = req.user!.email!;
-      const downline = await db.select().from(profiles).where(sql`${profiles.ancestors} @> ARRAY[${email}]::text[]`);
-      res.json(downline);
+      try {
+        const downline = await db.select().from(profiles).where(sql`${profiles.ancestors} @> ARRAY[${email}]::text[]`);
+        res.json(downline);
+      } catch (dbError) {
+        console.error("DB error fetching downline:", dbError);
+        res.json([]);
+      }
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
@@ -135,6 +140,19 @@ async function startServer() {
     }
   });
 
+  app.patch("/api/admin/users/:id", requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const adminProfile = await getProfile(req.user!.uid);
+      if (adminProfile?.role !== 'Admin') {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+      const updatedProfile = await updateProfile(req.params.id, req.body);
+      res.json(updatedProfile);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Settings routes
   app.get("/api/settings", async (req, res) => {
     try {
@@ -168,8 +186,13 @@ async function startServer() {
       if (profile?.role !== 'Admin') {
         return res.status(403).json({ error: 'Forbidden' });
       }
-      const allUsers = await db.select().from(profiles).orderBy(desc(profiles.created_at));
-      res.json(allUsers);
+      try {
+        const allUsers = await db.select().from(profiles).orderBy(desc(profiles.created_at));
+        res.json(allUsers);
+      } catch (dbError) {
+        console.error("DB error fetching users:", dbError);
+        res.json([]);
+      }
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

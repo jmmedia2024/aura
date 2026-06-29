@@ -272,7 +272,7 @@ export default function Admin() {
         referred_by_email: editReferred.trim(),
       };
 
-      const response = await fetch("/api/profile", {
+      const response = await fetch(`/api/admin/users/${editingUser.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -964,13 +964,13 @@ export default function Admin() {
                               </div>
                             </td>
                             <td className="p-4 font-black text-slate-900 tracking-wide">
-                              {app.card_name}
+                              {app.full_name}
                             </td>
                             <td className="p-4 capitalize font-semibold text-xs text-blue-600">
-                              {getDesignName(app.card_color)}
+                              {getDesignName(app.card_design_id)}
                             </td>
                             <td className="p-4 text-xs font-semibold text-slate-600">
-                              {app.phone_number}
+                              {app.phone}
                             </td>
                             <td
                               className="p-4 max-w-xs truncate text-xs text-slate-500 font-medium"
