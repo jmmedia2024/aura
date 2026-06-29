@@ -1,37 +1,16 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "fandomaurora",
-  "main": "src/index.ts",
-  "compatibility_date": "2025-02-04",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "observability": {
-    "enabled": true,
-    "logs": {
-      "enabled": true,
-      "invocation_logs": true
-    },
-    "traces": {
-      "enabled": true
-    }
-  },
-  // Add this section
+  "name": "my-app",
+  "main": "src/api.ts",
+  "compatibility_date": "2024-04-19",
   "compatibility_flags": [
     "nodejs_compat"
   ],
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
-      "id": "c041eb88df5a4594a86431ee93a66220",
-
-      // Optional. Can be used to connect to a local database for local development
-      "localConnectionString": "postgresql://user:password@localhost:5432/databasename"
+      "id": "YOUR_HYPERDRIVE_ID",
+      "localConnectionString": "postgres://localhost:5432/postgres"
     }
-  ],
-
-  // Smart Placement: Run your Worker close to your database for lower latency
-  "placement": {
-    "region": "aws:us-east-1"
-  }
+  ]
 }

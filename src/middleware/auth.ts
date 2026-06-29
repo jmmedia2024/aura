@@ -1,51 +1,47 @@
-import { Request, Response, NextFunction } from 'express';
 import { createClient } from '@supabase/supabase-js';
+import { Context, Next } from 'hono';
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL!;
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || 'placeholder';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export interface AuthRequest extends Request {
-  user?: {
-    uid: string;
-    email?: string;
-  };
-}
-
-export async function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
+export async function requireAuth(c: Context, next: Next) {
+  const authHeader = c.req.header('authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return c.json({ error: 'Unauthorized' }, 401);
   }
 
   const token = authHeader.split(' ')[1];
+  
   if (token.startsWith('mock-token-')) {
     const email = token.replace('mock-token-', '');
-    req.user = {
+    c.set('user', {
       uid: 'mock-user-id',
       email: email
-    };
+    });
     return next();
   }
+  
   if (token === 'mock-token') {
-    req.user = {
+    c.set('user', {
       uid: 'mock-user-id',
       email: 'nkjoy@fandomaurora.com'
-    };
+    });
     return next();
   }
+  
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);
     if (error || !user) {
-      return res.status(401).json({ error: 'Invalid token' });
+      return c.json({ error: 'Invalid token' }, 401);
     }
 
-    req.user = {
+    c.set('user', {
       uid: user.id,
       email: user.email
-    };
-    next();
+    });
+    return next();
   } catch (err) {
-    return res.status(401).json({ error: 'Authentication failed' });
+    return c.json({ error: 'Authentication failed' }, 401);
   }
 }
