@@ -3,28 +3,11 @@
   "name": "fandomaurora",
   "main": "src/index.ts",
   "compatibility_date": "2025-02-04",
-  "observability": {
-    "enabled": true
-  },
-
-  // Add nodejs_compat compatibility flag to support common database drivers
   "compatibility_flags": [
     "nodejs_compat"
   ],
-
-  // Add this to your wrangler.jsonc
-  "hyperdrive": [
-    {
-      "binding": "HYPERDRIVE",
-      "id": "b809c204026c42a681d44f67a603973c",
-      
-      // Optional. Can be used to connect to a local database for local development with `wrangler dev`
-      "localConnectionString": "<LOCAL_CONNECTION_STRING_FOR_LOCAL_DEVELOPMENT_HERE>"
-    }
-  ]
-}
-{
   "observability": {
+    "enabled": true,
     "logs": {
       "enabled": true,
       "invocation_logs": true
@@ -32,5 +15,12 @@
     "traces": {
       "enabled": true
     }
-  }
+  },
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "b809c204026c42a681d44f67a603973c",
+      "localConnectionString": "<LOCAL_CONNECTION_STRING_FOR_LOCAL_DEVELOPMENT_HERE>"
+    }
+  ]
 }
