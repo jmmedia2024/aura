@@ -2,7 +2,8 @@ import { motion } from 'motion/react';
 import { Mail, Lock, User, UserPlus, Loader2, Users, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { auth } from '../lib/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -26,62 +27,53 @@ export default function Signup() {
         finalEmail = `${finalEmail}@fandomaurora.com`;
       }
 
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: finalEmail,
-        password,
-      });
-
-      if (signUpError) throw signUpError;
-      const user = authData.user;
-      if (!user) throw new Error('회원가입에 실패했습니다.');
+      const userCredential = await createUserWithEmailAndPassword(auth, finalEmail, password);
+      const user = userCredential.user;
 
       let ancestors: string[] = [];
       const recruiterEmailClean = signUpRole === 'Sales' ? recruiterEmail.trim() : '';
 
       if (recruiterEmailClean) {
-        // Resolve recruiter by checking username / email
         let finalRecruiterEmail = recruiterEmailClean;
         if (!finalRecruiterEmail.includes('@')) {
           finalRecruiterEmail = `${finalRecruiterEmail}@fandomaurora.com`;
         }
-
-        const { data: recruiterData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('email', finalRecruiterEmail)
-          .single();
-
-        if (recruiterData) {
-          ancestors = [finalRecruiterEmail, ...(recruiterData.ancestors || [])];
-        } else {
-          ancestors = [finalRecruiterEmail];
-        }
+        // Since we can't easily query the database directly from the client without an API route,
+        // we'll just set the parent as the ancestor for now. The backend should ideally handle tree building.
+        ancestors = [finalRecruiterEmail];
       }
 
-      const { error: supabaseError } = await supabase
-        .from('profiles')
-        .insert([{
-          id: user.id,
-          email: finalEmail,
+      // Instead of writing to profiles directly via Supabase, we send it to our backend API
+      const token = await user.getIdToken();
+      const response = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
           display_name: displayName,
           tier: signUpRole === 'Sales' ? 'Gold' : 'Basic',
           role: signUpRole,
           referred_by_email: recruiterEmailClean ? (recruiterEmailClean.includes('@') ? recruiterEmailClean : `${recruiterEmailClean}@fandomaurora.com`) : '',
           ancestors: ancestors,
           phone_number: '',
-          created_at: new Date().toISOString(),
-        }]);
+        })
+      });
 
-      if (supabaseError) throw supabaseError;
-
-      if (!authData.session) {
-        alert('회원가입이 완료되었습니다. 이메일을 확인하여 인증을 완료해주세요.');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '프로필 업데이트에 실패했습니다.');
       }
       
       navigate('/');
     } catch (err: any) {
       console.error(err);
-      setError(err.message || '회원가입 중 오류가 발생했습니다.');
+      if (err.code === 'auth/email-already-in-use') {
+        setError('이미 사용중인 이메일/아이디 입니다.');
+      } else {
+        setError(err.message || '회원가입 중 오류가 발생했습니다.');
+      }
     } finally {
       setLoading(false);
     }

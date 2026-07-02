@@ -1,25 +1,16 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "fandomaurora",
-  "main": "src/index.ts",
-  "compatibility_date": "2025-02-04",
-  "observability": {
-    "enabled": true
-  },
-
-  // Add nodejs_compat compatibility flag to support common database drivers
+  "name": "my-app",
+  "main": "src/api.ts",
+  "compatibility_date": "2024-04-19",
   "compatibility_flags": [
     "nodejs_compat"
   ],
-
-  // Add this to your wrangler.jsonc
   "hyperdrive": [
     {
-      "binding": "HYPERDRIVE",
-      "id": "087099a66be24367acd9078bc81bd681",
-      
-      // Optional. Can be used to connect to a local database for local development with `wrangler dev`
-      "localConnectionString": "<LOCAL_CONNECTION_STRING_FOR_LOCAL_DEVELOPMENT_HERE>"
+      "binding": "fandomaurora",
+      "id": "YOUR_HYPERDRIVE_ID",
+      "localConnectionString": "postgres://localhost:5432/postgres"
     }
   ]
 }

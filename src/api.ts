@@ -4,7 +4,7 @@ import { getOrCreateProfile, updateProfile, getProfile } from './db/profiles.ts'
 import { createApplication, getApplications, getApplicationsByUser, updateApplicationStatus } from './db/applications.ts';
 import { getCardDesigns, upsertCardDesign, deleteCardDesign } from './db/designs.ts';
 import { getAllSettings, upsertSetting } from './db/settings.ts';
-import { db, createWorkerDb, dbContext } from './db/index.ts';
+import { db, dbContext } from './db/index.ts';
 import { profiles } from './db/schema.ts';
 import { desc, sql } from 'drizzle-orm';
 
@@ -20,22 +20,6 @@ type Env = {
 };
 
 const app = new Hono<Env>().basePath('/api');
-
-// Middleware to inject Hyperdrive db connection for Cloudflare Workers
-app.use('*', async (c, next) => {
-  if (c.env?.fandomaurora?.connectionString) {
-    const { db: workerDb, client } = createWorkerDb(c.env.fandomaurora.connectionString);
-    
-    return dbContext.run({ db: workerDb, client }, async () => {
-      try {
-        await next();
-      } finally {
-        c.executionCtx.waitUntil(client.end());
-      }
-    });
-  }
-  return next();
-});
 
 // API routes
 app.get('/health', (c) => c.json({ status: 'ok' }));

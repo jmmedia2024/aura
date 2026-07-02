@@ -1,5 +1,4 @@
 import { Star, Music, Ship, Sparkles, Coins, CreditCard } from 'lucide-react';
-import { supabase } from './supabase'; // Keep if used elsewhere or remove if not needed, but we don't need it here.
 
 export const ICON_MAP: Record<string, any> = {
   Star,
@@ -91,9 +90,13 @@ export async function getSettings() {
 }
 
 export async function saveSettings(settings: any) {
-  const { supabase } = await import('./supabase');
-  const { data: { session } } = await supabase.auth.getSession();
-  const token = session?.access_token;
+  const { auth } = await import('./firebase');
+  
+  if (!auth.currentUser) {
+    throw new Error('Not authenticated');
+  }
+
+  const token = await auth.currentUser.getIdToken();
   
   const response = await fetch('/api/settings', {
     method: 'POST',

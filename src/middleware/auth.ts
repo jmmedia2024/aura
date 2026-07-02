@@ -1,25 +1,22 @@
-import { createClient } from '@supabase/supabase-js';
 import { Context, Next } from 'hono';
-
-const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || 'placeholder';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { adminAuth } from '../lib/firebase-admin.ts';
 
 export async function requireAuth(c: Context, next: Next) {
   const authHeader = c.req.header('authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return c.json({ error: 'Unauthorized' }, 401);
+    return c.json({ error: 'Unauthorized: Missing token' }, 401);
   }
 
   const token = authHeader.split(' ')[1];
   
+  // Keep mock tokens for local testing if necessary
   if (token.startsWith('mock-token-')) {
     const email = token.replace('mock-token-', '');
     c.set('user', {
       uid: 'mock-user-id',
       email: email
     });
-    return next();
+    return await next();
   }
   
   if (token === 'mock-token') {
@@ -27,21 +24,18 @@ export async function requireAuth(c: Context, next: Next) {
       uid: 'mock-user-id',
       email: 'nkjoy@fandomaurora.com'
     });
-    return next();
+    return await next();
   }
   
   try {
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user) {
-      return c.json({ error: 'Invalid token' }, 401);
-    }
-
+    const decodedToken = await adminAuth.verifyIdToken(token);
     c.set('user', {
-      uid: user.id,
-      email: user.email
+      uid: decodedToken.uid,
+      email: decodedToken.email
     });
-    return next();
-  } catch (err) {
-    return c.json({ error: 'Authentication failed' }, 401);
+    return await next();
+  } catch (error) {
+    console.error('Error verifying Firebase ID token:', error);
+    return c.json({ error: 'Unauthorized: Invalid token' }, 401);
   }
 }

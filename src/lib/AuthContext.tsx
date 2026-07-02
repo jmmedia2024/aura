@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User } from '@supabase/supabase-js';
-import { supabase } from './supabase.ts';
+import { User, onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase.ts';
 
 interface AuthContextType {
   user: User | null;
@@ -28,8 +28,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   const getToken = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token ?? null;
+    if (!auth.currentUser) return null;
+    return await auth.currentUser.getIdToken();
   };
 
   const fetchProfile = async () => {
@@ -59,20 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // 1. Initial Session Check
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      if (currentUser) {
-        fetchProfile();
-      } else {
-        setLoading(false);
-      }
-    });
-
-    // 2. Listen for Auth Changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      const currentUser = session?.user ?? null;
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       
       if (currentUser) {
@@ -84,12 +71,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => {
-      subscription.unsubscribe();
+      unsubscribe();
     };
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await auth.signOut();
   };
 
   return (

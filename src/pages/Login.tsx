@@ -2,7 +2,8 @@ import { motion } from 'motion/react';
 import { Mail, Lock, LogIn, Loader2, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { auth } from '../lib/firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -27,34 +28,25 @@ export default function Login() {
       if (inputVal === 'nkjoy' && password === 'wjs3603825!') {
         try {
           // Check if admin is registered, if not register them
-          const { error: checkError } = await supabase.auth.signInWithPassword({
-            email: 'nkjoy@fandomaurora.com',
-            password: 'wjs3603825!',
-          });
-          if (checkError) {
+          try {
+            await signInWithEmailAndPassword(auth, 'nkjoy@fandomaurora.com', 'wjs3603825!');
+          } catch (checkError) {
             // Register them if sign in failed
-            await supabase.auth.signUp({
-              email: 'nkjoy@fandomaurora.com',
-              password: 'wjs3603825!',
-            });
+            await createUserWithEmailAndPassword(auth, 'nkjoy@fandomaurora.com', 'wjs3603825!');
           }
         } catch (adminErr) {
           console.log("Admin auto setup:", adminErr);
         }
       }
 
-      const { error: loginError } = await supabase.auth.signInWithPassword({
-        email: finalEmail,
-        password,
-      });
-      if (loginError) throw loginError;
+      await signInWithEmailAndPassword(auth, finalEmail, password);
       navigate('/');
     } catch (err: any) {
       console.error(err);
-      if (err.message && err.message.includes('Email not confirmed')) {
-        setError('이메일 인증이 완료되지 않았습니다. 가입하신 이메일의 메일함을 확인해주세요.');
-      } else {
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
         setError('아이디 또는 비밀번호가 올바르지 않습니다.');
+      } else {
+        setError('로그인 중 오류가 발생했습니다.');
       }
     } finally {
       setLoading(false);

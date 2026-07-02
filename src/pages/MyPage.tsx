@@ -127,8 +127,8 @@ export default function MyPage() {
   const getDynamicTier = () => {
     if (certifiedTickets >= 10 || activityPoints >= 400 || profile?.tier === 'Legend Tier') {
       return {
-        id: 'platinum',
-        name: '플래티넘 (Platinum)',
+        id: 'gold',
+        name: '골드 (Gold)',
         badgeClass: 'bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 text-slate-950 border-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.45)]',
         accentColor: 'text-amber-400',
         barColor: 'bg-gradient-to-r from-amber-400 to-yellow-500',
@@ -141,30 +141,30 @@ export default function MyPage() {
     }
     if (certifiedTickets >= 5 || activityPoints >= 200 || profile?.tier === 'Gold') {
       return {
-        id: 'gold',
-        name: '골드 (Gold)',
+        id: 'silver',
+        name: '실버 (Silver)',
         badgeClass: 'bg-gradient-to-r from-slate-200 via-slate-100 to-slate-300 text-slate-950 border-white shadow-[0_0_20px_rgba(226,232,240,0.35)]',
         accentColor: 'text-slate-300',
         barColor: 'bg-gradient-to-r from-slate-400 to-slate-200',
         bgGlow: 'bg-slate-500/5 border-slate-500/20 shadow-[0_0_30px_rgba(226,232,240,0.08)]',
-        emoji: '🪙',
+        emoji: '🥈',
         pointsNeeded: 10 - certifiedTickets,
         pointsScoreNeeded: 400 - activityPoints,
-        nextTier: '플래티넘',
+        nextTier: '골드',
         desc: '우수 등급: 선예매권 발급 및 비즈니스 추천 영업 권한이 활성화됩니다.'
       };
     }
     return {
-      id: 'silver',
-      name: '실버 (Silver)',
-      badgeClass: 'bg-gradient-to-r from-blue-500/15 to-cyan-500/15 text-cyan-300 border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.25)]',
-      accentColor: 'text-cyan-400',
-      barColor: 'bg-gradient-to-r from-blue-500 to-cyan-400',
-      bgGlow: 'bg-blue-500/5 border-blue-500/20 shadow-[0_0_30px_rgba(6,182,212,0.1)]',
-      emoji: '🥈',
+      id: 'bronze',
+      name: '브론즈 (Bronze)',
+      badgeClass: 'bg-gradient-to-r from-orange-500/15 to-amber-600/15 text-orange-400 border-orange-500/40 shadow-[0_0_20px_rgba(249,115,22,0.25)]',
+      accentColor: 'text-orange-400',
+      barColor: 'bg-gradient-to-r from-orange-500 to-amber-500',
+      bgGlow: 'bg-orange-500/5 border-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.1)]',
+      emoji: '🥉',
       pointsNeeded: 5 - certifiedTickets,
       pointsScoreNeeded: 200 - activityPoints,
-      nextTier: '골드',
+      nextTier: '실버',
       desc: '기본 등급: 마이 멤버십 디지털 팬 패스 발급 및 기본 리베이트 혜택이 적용됩니다.'
     };
   };
@@ -172,8 +172,8 @@ export default function MyPage() {
   const currentTierInfo = getDynamicTier();
 
   const getOverallProgress = () => {
-    if (currentTierInfo.id === 'platinum') return 100;
-    if (currentTierInfo.id === 'gold') {
+    if (currentTierInfo.id === 'gold') return 100;
+    if (currentTierInfo.id === 'silver') {
       const ticketProgress = Math.min(100, Math.max(0, ((certifiedTickets - 5) / 5) * 100));
       const pointsProgress = Math.min(100, Math.max(0, ((activityPoints - 200) / 200) * 100));
       return Math.round(Math.max(ticketProgress, pointsProgress));
@@ -546,33 +546,33 @@ export default function MyPage() {
 
                       {/* Milestones */}
                       <div className="relative flex justify-between px-1">
-                        {/* Silver Milestone */}
+                        {/* Bronze Milestone */}
                         <div className="flex flex-col items-center">
-                          <div className="w-6 h-6 rounded-full bg-slate-950 border-2 border-cyan-400 flex items-center justify-center text-[10px] shadow-[0_0_10px_rgba(34,211,238,0.5)] z-10">
-                            🥈
+                          <div className="w-6 h-6 rounded-full bg-slate-950 border-2 border-orange-400 flex items-center justify-center text-[10px] shadow-[0_0_10px_rgba(249,115,22,0.5)] z-10">
+                            🥉
                           </div>
-                          <span className="text-[9px] font-black mt-1 text-cyan-400">실버</span>
+                          <span className="text-[9px] font-black mt-1 text-orange-400">브론즈</span>
                           <span className="text-[7px] text-slate-500 font-bold">기본 개방</span>
                         </div>
 
-                        {/* Gold Milestone */}
+                        {/* Silver Milestone */}
                         <div className="flex flex-col items-center">
                           <div className={`w-6 h-6 rounded-full bg-slate-950 border-2 flex items-center justify-center text-[10px] z-10 transition-all duration-500 ${
                             certifiedTickets >= 5 || activityPoints >= 200 || profile?.tier === 'Legend Tier' || profile?.tier === 'Gold'
                               ? 'border-slate-300 shadow-[0_0_15px_rgba(255,255,255,0.4)]'
                               : 'border-slate-800 text-slate-600'
                           }`}>
-                            🪙
+                            🥈
                           </div>
                           <span className={`text-[9px] font-black mt-1 ${
                             certifiedTickets >= 5 || activityPoints >= 200 || profile?.tier === 'Legend Tier' || profile?.tier === 'Gold'
                               ? 'text-slate-200'
                               : 'text-slate-500'
-                          }`}>골드</span>
+                          }`}>실버</span>
                           <span className="text-[7px] text-slate-500 font-bold">티켓5 / 200점</span>
                         </div>
 
-                        {/* Platinum Milestone */}
+                        {/* Gold Milestone */}
                         <div className="flex flex-col items-center">
                           <div className={`w-6 h-6 rounded-full bg-slate-950 border-2 flex items-center justify-center text-[10px] z-10 transition-all duration-500 ${
                             certifiedTickets >= 10 || activityPoints >= 400 || profile?.tier === 'Legend Tier'
@@ -585,7 +585,7 @@ export default function MyPage() {
                             certifiedTickets >= 10 || activityPoints >= 400 || profile?.tier === 'Legend Tier'
                               ? 'text-amber-400'
                               : 'text-slate-500'
-                          }`}>플래티넘</span>
+                          }`}>골드</span>
                           <span className="text-[7px] text-slate-500 font-bold">티켓10 / 400점</span>
                         </div>
                       </div>
@@ -602,13 +602,13 @@ export default function MyPage() {
                           <span className="text-xs font-black text-slate-300">티켓 인증 현황</span>
                         </div>
                         <span className="text-xs font-black text-cyan-400">
-                          {certifiedTickets} / {currentTierInfo.id === 'silver' ? 5 : 10}
+                          {certifiedTickets} / {currentTierInfo.id === 'bronze' ? 5 : 10}
                         </span>
                       </div>
                       <div className="h-3 w-full bg-black/20 rounded-full overflow-hidden border border-white/5 p-0.5">
                         <motion.div 
                           initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(100, (certifiedTickets / (currentTierInfo.id === 'silver' ? 5 : 10)) * 100)}%` }}
+                          animate={{ width: `${Math.min(100, (certifiedTickets / (currentTierInfo.id === 'bronze' ? 5 : 10)) * 100)}%` }}
                           className={`h-full rounded-full ${currentTierInfo.barColor} shadow-[0_0_15px_rgba(34,211,238,0.4)]`}
                         />
                       </div>
@@ -623,13 +623,13 @@ export default function MyPage() {
                           <span className="text-xs font-black text-slate-300">커뮤니티 활동 점수</span>
                         </div>
                         <span className="text-xs font-black text-blue-400">
-                          {activityPoints} / {currentTierInfo.id === 'silver' ? 200 : 400}
+                          {activityPoints} / {currentTierInfo.id === 'bronze' ? 200 : 400}
                         </span>
                       </div>
                       <div className="h-3 w-full bg-black/20 rounded-full overflow-hidden border border-white/5 p-0.5">
                         <motion.div 
                           initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(100, (activityPoints / (currentTierInfo.id === 'silver' ? 200 : 400)) * 100)}%` }}
+                          animate={{ width: `${Math.min(100, (activityPoints / (currentTierInfo.id === 'bronze' ? 200 : 400)) * 100)}%` }}
                           className="h-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 shadow-[0_0_15px_rgba(37,99,235,0.4)]"
                         />
                       </div>
@@ -724,7 +724,7 @@ export default function MyPage() {
                       style={{ 
                         width: !currentTierInfo.nextTier 
                           ? '100%' 
-                          : `${Math.min(100, (currentTierInfo.id === 'silver' 
+                          : `${Math.min(100, (currentTierInfo.id === 'bronze' 
                                ? (certifiedTickets / 5) * 100 
                                : ((certifiedTickets - 5) / 5) * 100))}%` 
                       }}
@@ -757,19 +757,19 @@ export default function MyPage() {
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full items-stretch">
                 <div className={`rounded-2xl p-5 border flex flex-col justify-between transition-all duration-300 ${
-                  currentTierInfo.id === 'silver' 
-                    ? 'bg-[#060e22] border-cyan-400/40 shadow-[0_0_15px_rgba(6,182,212,0.15)] scale-[1.01]' 
+                  currentTierInfo.id === 'bronze' 
+                    ? 'bg-[#1a1105] border-orange-400/40 shadow-[0_0_15px_rgba(249,115,22,0.15)] scale-[1.01]' 
                     : 'bg-slate-950/40 border-slate-900 opacity-65 hover:opacity-100'
                 }`}>
                   <div className="space-y-4">
-                    <span className="text-[10px] font-black px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded">🥈 실버 등급</span>
+                    <span className="text-[10px] font-black px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-400 rounded">🥉 브론즈 등급</span>
                     <ul className="space-y-1.5 text-[11px] font-bold text-slate-300">
                       <li className="flex items-start gap-1">
-                        <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-orange-400 shrink-0 mt-0.5" />
                         <span>기본 커뮤니티 입장</span>
                       </li>
                       <li className="flex items-start gap-1">
-                        <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-orange-400 shrink-0 mt-0.5" />
                         <span>디지털 팬 패스 발급</span>
                       </li>
                     </ul>
@@ -777,19 +777,19 @@ export default function MyPage() {
                 </div>
 
                 <div className={`rounded-2xl p-5 border flex flex-col justify-between transition-all duration-300 ${
-                  currentTierInfo.id === 'gold' 
+                  currentTierInfo.id === 'silver' 
                     ? 'bg-[#151c2e] border-slate-300 shadow-[0_0_20px_rgba(255,255,255,0.15)] scale-[1.01]' 
                     : 'bg-slate-950/40 border-slate-900 opacity-65 hover:opacity-100'
                 }`}>
                   <div className="space-y-4">
-                    <span className="text-[10px] font-black px-2 py-0.5 bg-slate-100 text-slate-950 rounded">🪙 골드 등급</span>
+                    <span className="text-[10px] font-black px-2 py-0.5 bg-slate-100 text-slate-950 rounded">🥈 실버 등급</span>
                     <ul className="space-y-1.5 text-[11px] font-bold text-slate-200">
                       <li className="flex items-start gap-1">
-                        <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
                         <span>단독 콘서트 선예매권</span>
                       </li>
                       <li className="flex items-start gap-1">
-                        <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
                         <span>영업 하위 링크 활성화</span>
                       </li>
                     </ul>
@@ -797,12 +797,12 @@ export default function MyPage() {
                 </div>
 
                 <div className={`rounded-2xl p-5 border flex flex-col justify-between transition-all duration-300 ${
-                  currentTierInfo.id === 'platinum' 
+                  currentTierInfo.id === 'gold' 
                     ? 'bg-[#1e170a] border-amber-400/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-[1.01]' 
                     : 'bg-slate-950/40 border-slate-900 opacity-65 hover:opacity-100'
                 }`}>
                   <div className="space-y-4">
-                    <span className="text-[10px] font-black px-2 py-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 text-black rounded font-black">👑 플래티넘</span>
+                    <span className="text-[10px] font-black px-2 py-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 text-black rounded font-black">👑 골드 등급</span>
                     <ul className="space-y-1.5 text-[11px] font-bold text-amber-100">
                       <li className="flex items-start gap-1">
                         <Check className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />

@@ -1,14 +1,30 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import pkg from 'pg';
+const { Pool } = pkg;
 import * as schema from './schema.ts';
 import { AsyncLocalStorage } from 'node:async_hooks';
 
-// For local Node.js / Express development:
-const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
+// Function to create a new connection pool.
+export const createPool = () => {
+  return new Pool({
+    host: process.env.SQL_HOST,
+    user: process.env.SQL_USER,
+    password: process.env.SQL_PASSWORD,
+    database: process.env.SQL_DB_NAME,
+    connectionTimeoutMillis: 15000,
+  });
+};
 
-// Global pool for Node.js environments
-const client = postgres(connectionString);
-const defaultDb = drizzle(client, { schema });
+// Create a pool instance.
+const pool = createPool();
+
+// Prevent unhandled pool-level errors from crashing the application
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle SQL pool client:', err);
+});
+
+// Initialize Drizzle with the pool and schema.
+const defaultDb = drizzle(pool, { schema });
 
 export const dbContext = new AsyncLocalStorage<{ db: any, client?: any }>();
 
@@ -23,9 +39,3 @@ export const db = new Proxy({} as any, {
     return value;
   }
 });
-
-// For Cloudflare Workers + Hyperdrive, connection must be initialized per request
-export function createWorkerDb(connectionString: string) {
-  const sql = postgres(connectionString);
-  return { client: sql, db: drizzle(sql, { schema }) };
-}
